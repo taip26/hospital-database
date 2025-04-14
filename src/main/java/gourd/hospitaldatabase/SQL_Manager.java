@@ -11,12 +11,12 @@ public class SQL_Manager {
         try {
             if (conn == null || conn.isClosed()) {
                 conn = DriverManager.getConnection(url);
-                return "Connected to Database!";
+                return AppConstants.CONNECTED_TO_DATABASE;
             } else {
-                return "Already connected to Database!";
+                return AppConstants.ALREADY_CONNECTED;
             }
         } catch (SQLException e) {
-            return "Failed to connect to database. Error message:\n" + e.getMessage();
+            return AppConstants.FAILED_TO_CONNECT + e.getMessage();
         }
     }
 
@@ -29,12 +29,12 @@ public class SQL_Manager {
             if (conn != null && !conn.isClosed()) {
                 conn.close();
                 conn = null;
-                return "Database connection closed!";
+                return AppConstants.CONNECTION_CLOSED;
             } else {
-                return "Database connection already closed!";
+                return AppConstants.CONNECTION_ALREADY_CLOSED;
             }
         } catch (SQLException e) {
-            return "Error closing connection: " + e.getMessage();
+            return AppConstants.ERROR_CLOSING_CONNECTION + e.getMessage();
         }
     }
 }

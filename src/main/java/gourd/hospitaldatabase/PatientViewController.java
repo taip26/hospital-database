@@ -11,14 +11,6 @@ import java.io.IOException;
 
 public class PatientViewController {
     public void onBackButtonClick(ActionEvent actionEvent) {
-        try {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("main-view.fxml"));
-            Parent root = fxmlLoader.load();
-            Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
-            stage.setScene(new Scene(root));
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        MainController.navigate_to_main(actionEvent);
     }
 }
