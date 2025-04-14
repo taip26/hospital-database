@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="gourd.hospitaldatabase.AddBillModalController"
+            prefHeight="400.0" prefWidth="600.0">
+    <VBox spacing="10.0" alignment="CENTER" prefWidth="600.0" prefHeight="400.0" style="-fx-padding: 20;">
+        <Label text="Create Medical Bill" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
+
+        <HBox spacing="10.0">
+            <Label text="Date (MM/DD/YYYY):" />
+            <TextField fx:id="dateField" promptText="MM/DD/YYYY" />
+        </HBox>
+
+        <HBox spacing="10.0">
+            <Label text="Time (EST):" />
+            <TextField fx:id="timeField" promptText="HH:MM AM/PM" />
+        </HBox>
+
+        <HBox spacing="10.0">
+            <Label text="Doctor:" />
+            <ComboBox fx:id="doctorDropdown" />
+        </HBox>
+
+        <HBox spacing="10.0">
+            <Label text="Patient:" />
+            <ComboBox fx:id="patientDropdown" />
+        </HBox>
+
+        <HBox spacing="10.0">
+            <Label text="Reason:" />
+            <TextField fx:id="reasonField" />
+        </HBox>
+
+        <HBox spacing="10.0">
+            <Label text="Money Sum:" />
+            <TextField fx:id="moneySumField" promptText="0.00" />
+        </HBox>
+
+        <HBox spacing="10.0">
+            <Label text="Insurance Deductible:" />
+            <TextField fx:id="insuranceDeductibleField" promptText="0.00" />
+        </HBox>
+
+        <HBox spacing="10.0">
+            <Button text="Cancel" onAction="#handleCancel" style="-fx-color: red;"/>
+            <Button text="Submit" onAction="#handleSubmit" style="-fx-color: lightgreen;"/>
+        </HBox>
+    </VBox>
+</AnchorPane>
