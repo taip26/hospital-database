@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+        <?import java.lang.*?>
+        <?import java.util.*?>
+        <?import javafx.scene.*?>
+        <?import javafx.scene.control.*?>
+        <?import javafx.scene.layout.*?>
+
+
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="gourd.hospitaldatabase.StaffViewController"
+            prefHeight="400.0" prefWidth="600.0">
+
+    <!-- Title Label -->
+    <Label text="Create Appointment"
+           AnchorPane.leftAnchor="10.0"
+           AnchorPane.topAnchor="10.0"
+           style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+
+    <TextField fx:id="patientIdField" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="50.0" prefWidth="100.0" promptText="Patient ID"/>
+
+    <TextField fx:id="staffIdField" AnchorPane.leftAnchor="130.0"
+               AnchorPane.topAnchor="50.0" prefWidth="100.0" promptText="Staff ID"/>
+
+    <!-- DatePicker -->
+    <DatePicker fx:id="appointmentDatePicker"
+                AnchorPane.leftAnchor="10.0"
+                AnchorPane.topAnchor="100.0"
+                prefWidth="150.0"/>
+
+    <!-- Time Input -->
+    <TextField fx:id="appointmentTimeField"
+               promptText="Time (HH:mm)"
+               AnchorPane.leftAnchor="170.0"
+               AnchorPane.topAnchor="100.0"
+               prefWidth="100.0"/>
+
+    <!-- Create Appointment Button -->
+    <Button text="Create Appointment"
+            AnchorPane.leftAnchor="10.0"
+            AnchorPane.topAnchor="320.0"
+            onAction="#handleCreateAppointment"/>
+
+    <!-- Status Label -->
+    <Label fx:id="statusLabel"
+           AnchorPane.leftAnchor="150.0"
+           AnchorPane.topAnchor="320.0" />
+
+</AnchorPane>
