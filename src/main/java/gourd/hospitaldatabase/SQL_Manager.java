@@ -67,4 +67,19 @@ public class SQL_Manager {
             return false;
         }
     }
+
+    public static boolean deleteAppointment(int appointmentId) {
+        String query = "DELETE FROM appointment WHERE appointment_id = ?";
+        try (Connection conn = SQL_Manager.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setInt(1, appointmentId);
+            int rowsAffected = stmt.executeUpdate();
+            return rowsAffected > 0; // Return true if a row was deleted
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }
