@@ -8,20 +8,20 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 public class AddBillModalController {
     @FXML
+    private ComboBox<String> appointmentDropdown;
+
+    @FXML
     private TextField dateField;
-
-    @FXML
-    private TextField timeField;
-
-    @FXML
-    private ComboBox<String> doctorDropdown;
-
-    @FXML
-    private ComboBox<String> patientDropdown;
 
     @FXML
     private TextField reasonField;
@@ -32,21 +32,49 @@ public class AddBillModalController {
     @FXML
     private TextField insuranceDeductibleField;
 
+    Map<String, AppointmentModel> appointmentMap = new HashMap<>();
+
     private static final Pattern DATE_PATTERN = Pattern.compile("\\d{2}/\\d{2}/\\d{4}");
     private static final Pattern TIME_PATTERN = Pattern.compile("(0[1-9]|1[0-2]):[0-5][0-9] (AM|PM)");
 
     @FXML
     private void initialize() {
-        doctorDropdown.getItems().addAll("Dr. Smith", "Dr. Johnson", "Dr. Lee");
-        patientDropdown.getItems().addAll("John Doe", "Jane Roe", "Alice Brown");
+        List<AppointmentModel> appointments = SQL_Manager.getAllAppointmentsList();
+        for (AppointmentModel appointment : appointments) {
+            appointmentDropdown.getItems().add(
+                   appointment.getAppointmentID() + " " + appointment.getVisitDate() + " " + appointment.getVisitTime() + " " +
+                            appointment.getPatientID() + " " + appointment.getStaffID()
+            );
+            appointmentMap.put(
+                    appointment.getAppointmentID() + " " + appointment.getVisitDate() + " " + appointment.getVisitTime() + " " +
+                            appointment.getPatientID() + " " + appointment.getStaffID(),
+                    appointment
+            );
+        }
+
     }
 
     @FXML
     private void handleSubmit() {
+        String appointmentSelected = appointmentDropdown.getValue();
+        if (appointmentSelected == null || appointmentSelected.isEmpty()) {
+            showAlert("Invalid Appointment", "Please select an appointment.");
+            return;
+        }
+        // Extract appointment details
+        AppointmentModel appointment = appointmentMap.get(appointmentSelected);
+        int doctorID = appointment.getStaffID();
+        int patientID = appointment.getPatientID();
+//        String[] appointmentSplit = appointment.split(" ");
+//        if (appointmentSplit.length < 4) {
+//            showAlert("Invalid Appointment Format", "The selected appointment format is incorrect.");
+//            return;
+//        }
+//        String doctorIDString = appointmentSplit[0];
+//        String patientIDString = appointmentSplit[1];
+//        String visitDate = appointmentSplit[2];
+//        String visitTime = appointmentSplit[3];
         String date = dateField.getText();
-        String time = timeField.getText();
-        String doctor = doctorDropdown.getValue();
-        String patient = patientDropdown.getValue();
         String reason = reasonField.getText();
         String moneySum = moneySumField.getText();
         String insuranceDeductible = insuranceDeductibleField.getText();
@@ -57,48 +85,79 @@ public class AddBillModalController {
             return;
         }
 
-        if (!TIME_PATTERN.matcher(time).matches()) {
-            showAlert("Invalid Time", "Please enter a valid time in HH:MM AM/PM format.");
-            return;
-        }
-
-        if (doctor == null || doctor.isEmpty()) {
-            showAlert("Invalid Doctor", "Please select a doctor.");
-            return;
-        }
-
-        if (patient == null || patient.isEmpty()) {
-            showAlert("Invalid Patient", "Please select a patient.");
-            return;
-        }
-
         if (reason == null || reason.trim().isEmpty()) {
             showAlert("Invalid Reason", "Please enter a reason.");
             return;
         }
 
+        double moneySumValue;
+        double insuranceDeductibleValue;
         try {
-            Double.parseDouble(moneySum);
+            moneySumValue = Double.parseDouble(moneySum);
         } catch (NumberFormatException e) {
             showAlert("Invalid Money Sum", "Please enter a valid number for Money Sum.");
             return;
         }
 
         try {
-            Double.parseDouble(insuranceDeductible);
+            insuranceDeductibleValue = Double.parseDouble(insuranceDeductible);
         } catch (NumberFormatException e) {
             showAlert("Invalid Insurance Deductible", "Please enter a valid number for Insurance Deductible.");
             return;
         }
 
-        // If all validations pass, process the data
-        System.out.println("Date: " + date);
-        System.out.println("Time: " + time);
-        System.out.println("Doctor: " + doctor);
-        System.out.println("Patient: " + patient);
+//        int patientID;
+//        int doctorID;
+//
+//        try {
+//            patientID = Integer.parseInt(patientIDString);
+//            doctorID = Integer.parseInt(doctorIDString);
+//        } catch (NumberFormatException e) {
+//            showAlert("Invalid ID", "Please select a valid appointment.");
+//            return;
+//        }
+
+        String formattedDate;
+        try {
+            LocalDate parsedDate = LocalDate.parse(date, DateTimeFormatter.ofPattern("MM/dd/yyyy"));
+            formattedDate = parsedDate.toString(); // Converts to YYYY-MM-DD
+        } catch (Exception e) {
+            showAlert("Invalid Date", "Failed to parse date. Ensure it is in MM/DD/YYYY format.");
+            return;
+        }
+
+
+        System.out.println("Debugging Values:");
+        System.out.println("Appointment ID: " + appointment.getAppointmentID());
+        System.out.println("Patient ID: " + patientID);
+        System.out.println("Doctor ID: " + doctorID);
+        System.out.println("Date: " + formattedDate);
         System.out.println("Reason: " + reason);
-        System.out.println("Money Sum: " + moneySum);
-        System.out.println("Insurance Deductible: " + insuranceDeductible);
+        System.out.println("Money Sum: " + moneySumValue);
+        System.out.println("Insurance Deductible: " + insuranceDeductibleValue);
+        System.out.println("Payment Status: Pending");
+        System.out.println("Admin ID: 1");
+
+
+        // Insert data into the database
+        try {
+            String result = SQL_Manager.insertMedicalBill(
+                    appointment.getAppointmentID(),
+                    patientID, // Replace with actual patientID
+                    doctorID, // Replace with actual staffID
+                    formattedDate,
+                    reason,
+                    moneySumValue,
+                    insuranceDeductibleValue,
+                    "Pending", // Example payment status
+                    1  // Replace with actual adminID
+            );
+            showAlert("Success", result);
+            handleCancel(null); // Close the modal after successful submission
+        } catch (Exception e) {
+            showAlert("Error", "Failed to insert medical bill: " + e.getMessage());
+        }
+
     }
 
     private void showAlert(String title, String message) {
@@ -110,6 +169,12 @@ public class AddBillModalController {
     }
 
     public void handleCancel(ActionEvent actionEvent) {
-        ((Stage) ((Node) actionEvent.getSource()).getScene().getWindow()).close();
+        Stage stage;
+        if (actionEvent != null) {
+            stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+        } else {
+            stage = (Stage) dateField.getScene().getWindow(); // Fallback to the current window
+        }
+        stage.close();
     }
 }

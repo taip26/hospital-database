@@ -14,23 +14,13 @@
         <Label text="Create Medical Bill" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
 
         <HBox spacing="10.0">
+            <Label text="Appointment:" />
+            <ComboBox fx:id="appointmentDropdown" />
+        </HBox>
+
+        <HBox spacing="10.0">
             <Label text="Date (MM/DD/YYYY):" />
             <TextField fx:id="dateField" promptText="MM/DD/YYYY" />
-        </HBox>
-
-        <HBox spacing="10.0">
-            <Label text="Time (EST):" />
-            <TextField fx:id="timeField" promptText="HH:MM AM/PM" />
-        </HBox>
-
-        <HBox spacing="10.0">
-            <Label text="Doctor:" />
-            <ComboBox fx:id="doctorDropdown" />
-        </HBox>
-
-        <HBox spacing="10.0">
-            <Label text="Patient:" />
-            <ComboBox fx:id="patientDropdown" />
         </HBox>
 
         <HBox spacing="10.0">

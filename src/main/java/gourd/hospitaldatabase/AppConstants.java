@@ -1,6 +1,9 @@
 package gourd.hospitaldatabase;
 
 public class AppConstants {
+    public static final String DATABASE_URL = "jdbc:mysql://localhost:3306/hospital?user=root&password=password-123";
+
+
     // Window Dimensions Constants
     public static final int WINDOW_WIDTH = 500;
     public static final int WINDOW_HEIGHT = 350;
