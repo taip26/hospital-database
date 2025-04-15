@@ -15,6 +15,8 @@ public class AdminViewController {
 
     @FXML
     private TextField patientIdField;
+    @FXML
+    private TextField searchPatientIdField;
 
     public void onBackButtonClick(ActionEvent actionEvent) {
         MainController.navigate_to_main(actionEvent);
@@ -33,6 +35,30 @@ public class AdminViewController {
             }
         } catch (NumberFormatException e) {
             System.out.println("Invalid Patient ID format.");
+        }
+    }
+
+    @FXML
+    public void onSearchPatientClick(ActionEvent event) {
+        String patientId = searchPatientIdField.getText();
+
+        if (patientId == null || patientId.isBlank()) {
+            System.out.println("Please enter a Patient ID.");
+            return;
+        }
+
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("patient-update.fxml"));
+            Parent root = loader.load();
+
+            // Pass patient ID to the new controller
+            PatientUpdateController controller = loader.getController();
+            controller.loadPatientById(patientId);
+
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.setScene(new Scene(root));
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

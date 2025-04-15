@@ -21,4 +21,9 @@
     <Button text="Delete Patient" onAction="#onDeletePatientClick"
             AnchorPane.leftAnchor="220.0" AnchorPane.topAnchor="100.0" />
 
+    <TextField fx:id="searchPatientIdField" promptText="Enter Patient ID to search"
+               AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="150.0" prefWidth="200.0" />
+
+    <Button text="Search" onAction="#onSearchPatientClick"
+            AnchorPane.leftAnchor="220.0" AnchorPane.topAnchor="150.0" />
 </AnchorPane>
