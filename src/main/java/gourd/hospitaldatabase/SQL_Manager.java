@@ -2,6 +2,7 @@ package gourd.hospitaldatabase;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class SQL_Manager {
@@ -37,4 +38,21 @@ public class SQL_Manager {
             return AppConstants.ERROR_CLOSING_CONNECTION + e.getMessage();
         }
     }
+
+    public static boolean deletePatientById(int patientId) {
+        String query = "DELETE FROM patients WHERE PatientID = ?";
+
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setInt(1, patientId);
+            int rowsAffected = stmt.executeUpdate();
+            return rowsAffected > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
 }
