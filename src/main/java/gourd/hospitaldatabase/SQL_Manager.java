@@ -82,4 +82,26 @@ public class SQL_Manager {
         }
     }
 
+    public static boolean insertPatient(int patientId, String dob, String name, String address, String insurance) {
+        String query = "INSERT INTO patients (PatientID, dob, Name, Address, Insurance) VALUES (?, ?, ?, ?, ?)";
+    
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+    
+            stmt.setInt(1, patientId);
+            stmt.setString(2, dob);
+            stmt.setString(3, name);
+            stmt.setString(4, address);
+            stmt.setString(5, insurance);
+    
+            int rows = stmt.executeUpdate();
+            return rows > 0;
+    
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
+
 }

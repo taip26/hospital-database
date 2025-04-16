@@ -50,8 +50,6 @@ public class AdminViewController {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("patient-update.fxml"));
             Parent root = loader.load();
-
-            // Pass patient ID to the new controller
             PatientUpdateController controller = loader.getController();
             controller.loadPatientById(patientId);
 
@@ -61,4 +59,19 @@ public class AdminViewController {
             e.printStackTrace();
         }
     }
+    
+    @FXML
+    private void onInsertPatientClick() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("patient-insert.fxml"));
+            Parent root = loader.load();
+
+            Stage stage = (Stage) patientIdField.getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 }
