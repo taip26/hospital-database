@@ -13,7 +13,7 @@
 <Label text="Staff View" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0"/>
     <Button text="Create Appointment"
             AnchorPane.leftAnchor="10.0"
-            AnchorPane.topAnchor="100.0"
+            AnchorPane.topAnchor="50.0"
             onAction="#handleOpenCreateAppointment"/>
-<Button text="Back" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="50.0" onAction="#onBackButtonClick"/>
+<Button text="Back" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="100.0" onAction="#onBackButtonClick"/>
 </AnchorPane>
