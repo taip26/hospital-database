@@ -30,7 +30,7 @@ public class SQL_Manager {
     }
 
     public static Connection getConnection() {
-        try 
+        try {
             if (conn == null || conn.isClosed()) {
                 connectToDatabase();
             }
@@ -218,7 +218,7 @@ public class SQL_Manager {
 
     public static boolean insertAppointment(Appointment appointment) {
         // SQL query with placeholders for parameters.
-        String query = "INSERT INTO appointment (PatientID, StaffID, Date, Time, Status) VALUES (?, ?, ?, ?, ?)";
+        String query = "INSERT INTO appointment (PatientID, StaffID, VisitDate, VisitTime, Status) VALUES (?, ?, ?, ?, ?)";
 
         try (Connection conn = SQL_Manager.getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
@@ -252,6 +252,88 @@ public class SQL_Manager {
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
+        }
+    }
+
+    public static List<String> getAllAdminsString() {
+        String sql = "SELECT * FROM administrator;";
+        List<String> adminsList = new ArrayList<>();
+
+        try (var conn = getConnection();
+             var pstmt = conn.prepareStatement(sql);
+             var rs = pstmt.executeQuery()) {
+
+            while (rs.next()) {
+                int administratorID = rs.getInt("AdministratorID");
+                String name = rs.getString("Name");
+                String role = rs.getString("Role");
+
+                String admin = administratorID + " " + name + " " + role;
+
+                adminsList.add(admin);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return adminsList;
+    }
+
+    public static List<String> getAllMedicalBillsString() {
+        String sql = "SELECT * FROM medicalbills;";
+        List<String> billsList = new ArrayList<>();
+
+        try (var conn = getConnection();
+             var pstmt = conn.prepareStatement(sql);
+             var rs = pstmt.executeQuery()) {
+
+            while (rs.next()) {
+                int billID = rs.getInt("BillID");
+                int patientID = rs.getInt("PatientID");
+                int staffID = rs.getInt("StaffID");
+                String reason = rs.getString("Reason");
+
+                String bill = billID + " " + patientID + " " + staffID + " " + reason;
+
+                billsList.add(bill);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return billsList;
+    }
+
+    public static String updateMedicalBill(int billId, String billDate, String reason, double paymentAmount,
+                                 double insuranceDeductible, String paymentStatus, int adminID) {
+        String sql = "UPDATE medicalbills SET BillDate = ?, Reason = ?, PaymentAmount = ?, " +
+                "InsuranceDeductible = ?, PaymentStatus = ?, AdminID = ? WHERE BillID = ?";
+        try (var conn = getConnection();
+             var pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setDate(1, java.sql.Date.valueOf(billDate));
+            pstmt.setString(2, reason);
+            pstmt.setBigDecimal(3, java.math.BigDecimal.valueOf(paymentAmount));
+            pstmt.setBigDecimal(4, java.math.BigDecimal.valueOf(insuranceDeductible));
+            pstmt.setString(5, paymentStatus);
+            pstmt.setInt(6, adminID);
+            pstmt.setInt(7, billId);
+
+            int rowsAffected = pstmt.executeUpdate();
+            return "Updated " + rowsAffected + " row(s) successfully";
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static String deleteMedicalBill(int billID) {
+        String sql = "DELETE FROM medicalbills WHERE BillID = ?";
+        try (var conn = getConnection();
+             var pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, billID);
+            int rowsAffected = pstmt.executeUpdate();
+            return "Deleted " + rowsAffected + " row(s) successfully";
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
 }

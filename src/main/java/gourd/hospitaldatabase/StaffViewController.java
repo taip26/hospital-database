@@ -81,7 +81,7 @@ public class StaffViewController {
 
             // Create the Appointment object. Ensure the constructor parameters match your Appointment class.
             Appointment appointment = new Appointment(patientId, dateValue, timeText, status, staffId);
-
+            System.out.println(appointment.toString());
             // Attempt to insert the appointment into the database
             boolean inserted = SQL_Manager.insertAppointment(appointment);
             if (inserted) {
