@@ -43,6 +43,23 @@ public class AdminViewController {
 
     @FXML
 
+    public void onOpenUpdateBillModal(ActionEvent actionEvent) {
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("update-bill-modal.fxml"));
+            Parent modalRoot = fxmlLoader.load();
+
+            Stage modalStage = new Stage();
+            modalStage.initModality(Modality.APPLICATION_MODAL);
+            modalStage.setTitle("Create Medical Bill");
+            modalStage.setScene(new Scene(modalRoot));
+            modalStage.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+
     public void onDeletePatientClick(ActionEvent event) {
         try {
             int patientId = Integer.parseInt(patientIdField.getText());
