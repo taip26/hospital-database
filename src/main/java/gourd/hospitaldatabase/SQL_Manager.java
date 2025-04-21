@@ -1,12 +1,18 @@
 package gourd.hospitaldatabase;
 
+import gourd.hospitaldatabase.pojos.Appointment;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
 public class SQL_Manager {
+    private final static String CONNECTION_URL = "jdbc:mysql://localhost:3306/hospitaldb?user=root&password=password";
     private static Connection conn;
 
     public static String connectToDatabase() {
@@ -25,7 +31,6 @@ public class SQL_Manager {
     public static Connection getConnection() {
         try {
             if (conn == null || conn.isClosed()) {
-                // Reconnect if the connection is closed
                 connectToDatabase();
             }
         } catch (SQLException e) {
@@ -61,7 +66,7 @@ public class SQL_Manager {
             pstmt.setInt(1, appointmentID);
             pstmt.setInt(2, patientID);
             pstmt.setInt(3, staffID);
-            pstmt.setDate(4, java.sql.Date.valueOf(billDate)); // Format: YYYY-MM-DD
+            pstmt.setDate(4, java.sql.Date.valueOf(billDate));
             pstmt.setString(5, reason);
             pstmt.setBigDecimal(6, java.math.BigDecimal.valueOf(paymentAmount));
             pstmt.setBigDecimal(7, java.math.BigDecimal.valueOf(insuranceDeductible));
@@ -72,7 +77,7 @@ public class SQL_Manager {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        return "Inserted"+ rowsAffected +"row(s) successfully";
+        return "Inserted " + rowsAffected + " row(s) successfully";
     }
 
     public static List<AppointmentModel> getAllAppointmentsList() {
@@ -147,5 +152,98 @@ public class SQL_Manager {
             throw new RuntimeException(e);
         }
         return patientsList;
+    }
+
+    public static boolean deletePatientById(int patientId) {
+        String query = "DELETE FROM patients WHERE PatientID = ?";
+
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setInt(1, patientId);
+            int rowsAffected = stmt.executeUpdate();
+            return rowsAffected > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public static boolean updatePatient(int patientId, String dob, String name, String address, String insurance) {
+        String query = "UPDATE patients SET dob = ?, Name = ?, Address = ?, Insurance = ? WHERE PatientID = ?";
+
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setString(1, dob);
+            stmt.setString(2, name);
+            stmt.setString(3, address);
+            stmt.setString(4, insurance);
+            stmt.setInt(5, patientId);
+
+            int rows = stmt.executeUpdate();
+            return rows > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public static boolean insertPatient(int patientId, String dob, String name, String address, String insurance) {
+        String query = "INSERT INTO patients (PatientID, dob, Name, Address, Insurance) VALUES (?, ?, ?, ?, ?)";
+
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setInt(1, patientId);
+            stmt.setString(2, dob);
+            stmt.setString(3, name);
+            stmt.setString(4, address);
+            stmt.setString(5, insurance);
+
+            int rows = stmt.executeUpdate();
+            return rows > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public static boolean insertAppointment(Appointment appointment) {
+        String query = "INSERT INTO appointment (PatientID, StaffID, Date, Time, Status) VALUES (?, ?, ?, ?, ?)";
+
+        try (Connection conn = SQL_Manager.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setInt(1, appointment.getPatientId());
+            stmt.setInt(2, appointment.getStaffId());
+            stmt.setString(3, appointment.getDate());
+            stmt.setString(4, appointment.getTime());
+            stmt.setString(5, appointment.getStatus());
+
+            int rowsAffected = stmt.executeUpdate();
+            System.out.println("Rows affected: " + rowsAffected);
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public static boolean deleteAppointment(int appointmentId) {
+        String query = "DELETE FROM appointment WHERE appointment_id = ?";
+        try (Connection conn = SQL_Manager.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setInt(1, appointmentId);
+            int rowsAffected = stmt.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }

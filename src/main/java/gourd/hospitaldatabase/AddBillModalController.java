@@ -18,6 +18,9 @@ import java.util.regex.Pattern;
 
 public class AddBillModalController {
     @FXML
+    private ComboBox<String> adminDropdown;
+
+    @FXML
     private ComboBox<String> appointmentDropdown;
 
     @FXML
@@ -51,11 +54,19 @@ public class AddBillModalController {
                     appointment
             );
         }
-
+        List<String> admins = SQL_Manager.getAllAdminsString();
+        adminDropdown.getItems().addAll(admins);
     }
 
     @FXML
     private void handleSubmit() {
+        String selectedAdmin = adminDropdown.getValue();
+        if (selectedAdmin == null || selectedAdmin.isEmpty()) {
+            showAlert("Invalid Admin", "Please select an admin.");
+            return;
+        }
+        // Extract admin ID from the selected admin string
+        int adminID = Integer.parseInt(selectedAdmin.split(" ")[0]);
         String appointmentSelected = appointmentDropdown.getValue();
         if (appointmentSelected == null || appointmentSelected.isEmpty()) {
             showAlert("Invalid Appointment", "Please select an appointment.");
@@ -150,7 +161,7 @@ public class AddBillModalController {
                     moneySumValue,
                     insuranceDeductibleValue,
                     "Pending", // Example payment status
-                    1  // Replace with actual adminID
+                    adminID  // Replace with actual adminID
             );
             showAlert("Success", result);
             handleCancel(null); // Close the modal after successful submission

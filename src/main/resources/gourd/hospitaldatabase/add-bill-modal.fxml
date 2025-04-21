@@ -14,6 +14,11 @@
         <Label text="Create Medical Bill" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
 
         <HBox spacing="10.0">
+            <Label text="Admin:" />
+            <ComboBox fx:id="adminDropdown" />
+        </HBox>
+
+        <HBox spacing="10.0">
             <Label text="Appointment:" />
             <ComboBox fx:id="appointmentDropdown" />
         </HBox>
