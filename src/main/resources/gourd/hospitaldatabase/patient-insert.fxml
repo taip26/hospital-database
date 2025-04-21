@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="gourd.hospitaldatabase.PatientInsertController"
+            prefHeight="400.0" prefWidth="600.0">
+
+    <Label text="Insert Patient" layoutX="10" layoutY="10" />
+
+    <TextField fx:id="patientIdField" layoutX="150" layoutY="40" promptText="Patient ID"/>
+    <TextField fx:id="dobField" layoutX="150" layoutY="80" promptText="Date of Birth"/>
+    <TextField fx:id="nameField" layoutX="150" layoutY="120" promptText="Name"/>
+    <TextField fx:id="addressField" layoutX="150" layoutY="160" promptText="Address"/>
+    <TextField fx:id="insuranceField" layoutX="150" layoutY="200" promptText="Insurance"/>
+
+    <Button text="Save Changes" layoutX="150" layoutY="250" onAction="#onInsertPatientClick"/>
+</AnchorPane>

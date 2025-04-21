@@ -11,6 +11,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
+
 public class SQL_Manager {
     private final static String CONNECTION_URL = "jdbc:mysql://localhost:3306/hospitaldb?user=root&password=password";
     private static Connection conn;
@@ -29,7 +30,7 @@ public class SQL_Manager {
     }
 
     public static Connection getConnection() {
-        try {
+        try 
             if (conn == null || conn.isClosed()) {
                 connectToDatabase();
             }
@@ -193,34 +194,41 @@ public class SQL_Manager {
 
     public static boolean insertPatient(int patientId, String dob, String name, String address, String insurance) {
         String query = "INSERT INTO patients (PatientID, dob, Name, Address, Insurance) VALUES (?, ?, ?, ?, ?)";
-
+        
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
-
+    
             stmt.setInt(1, patientId);
             stmt.setString(2, dob);
             stmt.setString(3, name);
             stmt.setString(4, address);
             stmt.setString(5, insurance);
-
+    
             int rows = stmt.executeUpdate();
             return rows > 0;
-
+    
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
         }
     }
 
+    
+
+
     public static boolean insertAppointment(Appointment appointment) {
+        // SQL query with placeholders for parameters.
         String query = "INSERT INTO appointment (PatientID, StaffID, Date, Time, Status) VALUES (?, ?, ?, ?, ?)";
 
         try (Connection conn = SQL_Manager.getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
 
+            // Set the parameters from the Appointment object.
             stmt.setInt(1, appointment.getPatientId());
             stmt.setInt(2, appointment.getStaffId());
+            // Assuming appointment.getDate() returns a String like "YYYY-MM-DD"
             stmt.setString(3, appointment.getDate());
+            // Assuming appointment.getTime() returns a String like "HH:mm:ss"
             stmt.setString(4, appointment.getTime());
             stmt.setString(5, appointment.getStatus());
 
@@ -240,7 +248,7 @@ public class SQL_Manager {
 
             stmt.setInt(1, appointmentId);
             int rowsAffected = stmt.executeUpdate();
-            return rowsAffected > 0;
+            return rowsAffected > 0; // Return true if a row was deleted
         } catch (SQLException e) {
             e.printStackTrace();
             return false;

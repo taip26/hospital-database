@@ -7,6 +7,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.TextField;
+
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -24,6 +25,7 @@ public class AdminViewController {
     }
 
     @FXML
+
     public void onOpenAddBillModal(ActionEvent actionEvent) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("add-bill-modal.fxml"));
@@ -40,6 +42,7 @@ public class AdminViewController {
     }
 
     @FXML
+
     public void onDeletePatientClick(ActionEvent event) {
         try {
             int patientId = Integer.parseInt(patientIdField.getText());
