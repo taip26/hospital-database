@@ -8,15 +8,18 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class SQL_Manager {
     private final static String CONNECTION_URL = "jdbc:mysql://localhost:3306/hospitaldb?user=root&password=password";
     private static Connection conn;
 
-    public static String connectToDatabase(String url) {
+    public static String connectToDatabase() {
         try {
             if (conn == null || conn.isClosed()) {
-                conn = DriverManager.getConnection(url);
+                conn = DriverManager.getConnection(AppConstants.DATABASE_URL);
                 return AppConstants.CONNECTED_TO_DATABASE;
             } else {
                 return AppConstants.ALREADY_CONNECTED;
@@ -27,12 +30,14 @@ public class SQL_Manager {
     }
 
     public static Connection getConnection() {
-        try {
-            return DriverManager.getConnection(CONNECTION_URL);
+        try 
+            if (conn == null || conn.isClosed()) {
+                connectToDatabase();
+            }
         } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
+            throw new RuntimeException("Failed to reconnect to the database: " + e.getMessage(), e);
         }
+        return conn;
     }
 
     public static String closeConnection() {
@@ -48,8 +53,109 @@ public class SQL_Manager {
             return AppConstants.ERROR_CLOSING_CONNECTION + e.getMessage();
         }
     }
-  
-  public static boolean deletePatientById(int patientId) {
+
+    public static String insertMedicalBill(int appointmentID, int patientID, int staffID, String billDate, String reason,
+                                           double paymentAmount, double insuranceDeductible,
+                                           String paymentStatus, int adminID) {
+        String sql = "INSERT INTO medicalbills (AppointmentID, PatientID, StaffID, BillDate, Reason, PaymentAmount, " +
+                "InsuranceDeductible, PaymentStatus, AdminID) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        int rowsAffected;
+        try (var conn = getConnection();
+             var pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, appointmentID);
+            pstmt.setInt(2, patientID);
+            pstmt.setInt(3, staffID);
+            pstmt.setDate(4, java.sql.Date.valueOf(billDate));
+            pstmt.setString(5, reason);
+            pstmt.setBigDecimal(6, java.math.BigDecimal.valueOf(paymentAmount));
+            pstmt.setBigDecimal(7, java.math.BigDecimal.valueOf(insuranceDeductible));
+            pstmt.setString(8, paymentStatus);
+            pstmt.setInt(9, adminID);
+
+            rowsAffected = pstmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return "Inserted " + rowsAffected + " row(s) successfully";
+    }
+
+    public static List<AppointmentModel> getAllAppointmentsList() {
+        String sql = "SELECT * FROM appointment;";
+        List<AppointmentModel> appointmentsList = new ArrayList<>();
+
+        try (var conn = getConnection();
+             var pstmt = conn.prepareStatement(sql);
+             var rs = pstmt.executeQuery()) {
+
+            while (rs.next()) {
+                int appointmentID = rs.getInt("AppointmentID");
+                int patientID = rs.getInt("PatientID");
+                int staffID = rs.getInt("StaffID");
+                String date = rs.getString("VisitDate");
+                String time = rs.getString("VisitTime");
+
+                AppointmentModel appointment = new AppointmentModel(appointmentID, patientID, staffID, date, time);
+                appointmentsList.add(appointment);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return appointmentsList;
+    }
+
+    public static List<StaffModel> getDoctorsList() {
+        String sql = "SELECT * FROM staff WHERE role IN ('Physician', 'Surgeon', 'Pediatrician', 'Dermatologist', 'Cardiologist', 'Neurologist', 'Radiologist');";
+        List<StaffModel> doctorsList = new ArrayList<>();
+
+        try (var conn = getConnection();
+             var pstmt = conn.prepareStatement(sql);
+             var rs = pstmt.executeQuery()) {
+
+            while (rs.next()) {
+                int staffID = rs.getInt("StaffID");
+                String name = rs.getString("Name");
+                String role = rs.getString("Role");
+                doctorsList.add(new StaffModel(staffID, name, role));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return doctorsList;
+    }
+
+    public static List<PatientModel> getAllPatientsList() {
+        String sql = "SELECT * FROM patients;";
+        List<PatientModel> patientsList = new ArrayList<>();
+
+        try (var conn = getConnection();
+             var pstmt = conn.prepareStatement(sql);
+             var rs = pstmt.executeQuery()) {
+
+            while (rs.next()) {
+                int patientID = rs.getInt("PatientID");
+                String name = rs.getString("Name");
+                java.sql.Date dob = rs.getDate("dob");
+                String address = rs.getString("Address");
+                String insurance = rs.getString("Insurance");
+
+                PatientModel patient = new PatientModel();
+                patient.setPatientID(patientID);
+                patient.setName(name);
+                patient.setDob(dob);
+                patient.setAddress(address);
+                patient.setInsurance(insurance);
+
+                patientsList.add(patient);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return patientsList;
+    }
+
+    public static boolean deletePatientById(int patientId) {
         String query = "DELETE FROM patients WHERE PatientID = ?";
 
         try (Connection conn = getConnection();
@@ -106,6 +212,7 @@ public class SQL_Manager {
             return false;
         }
     }
+
     
 
 

@@ -11,20 +11,24 @@
             fx:controller="gourd.hospitaldatabase.AdminViewController"
             prefHeight="400.0" prefWidth="600.0">
 
-    <Label text="Admin View" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0" />
+    <Label text="Admin View" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0"/>
 
-    <Button text="Back" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="50.0" onAction="#onBackButtonClick" />
+    <Button text="Back" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="50.0" onAction="#onBackButtonClick"/>
+
+    <Button text="Add Medical Bill" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="100.0" onAction="#onOpenAddBillModal"/>
 
     <TextField fx:id="patientIdField" promptText="Enter Patient ID to delete"
-               AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="100.0" prefWidth="200.0" />
+               AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="150.0" prefWidth="200.0" />
 
     <Button text="Delete Patient" onAction="#onDeletePatientClick"
-            AnchorPane.leftAnchor="220.0" AnchorPane.topAnchor="100.0" />
+            AnchorPane.leftAnchor="220.0" AnchorPane.topAnchor="150.0" />
 
     <TextField fx:id="searchPatientIdField" promptText="Enter Patient ID to search"
-               AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="150.0" prefWidth="200.0" />
+               AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="200.0" prefWidth="200.0" />
+
     <Button text="Search" onAction="#onSearchPatientClick"
-            AnchorPane.leftAnchor="220.0" AnchorPane.topAnchor="150.0" />
+            AnchorPane.leftAnchor="220.0" AnchorPane.topAnchor="200.0" />
+
     <Button text="Insert New Patient" onAction="#onInsertPatientClick"
-            AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="200.0" />
+            AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="250.0" />
 </AnchorPane>

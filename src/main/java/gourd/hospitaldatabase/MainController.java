@@ -12,14 +12,14 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 public class MainController {
-    private final static String CONNECTION_URL = "jdbc:mysql://localhost:3307/hospital?user=root&password=password";
+    private final static String CONNECTION_URL = "jdbc:mysql://localhost:3306/hospital?user=root&password=password-123";
 
     @FXML
     private Label connectionMessage;
 
     @FXML
     protected void onConnectButtonClick() {
-        String msg = SQL_Manager.connectToDatabase(CONNECTION_URL);
+        String msg = SQL_Manager.connectToDatabase();
         connectionMessage.setText(msg);
     }
 

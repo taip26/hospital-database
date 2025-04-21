@@ -7,6 +7,8 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.TextField;
+
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -23,6 +25,24 @@ public class AdminViewController {
     }
 
     @FXML
+
+    public void onOpenAddBillModal(ActionEvent actionEvent) {
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("add-bill-modal.fxml"));
+            Parent modalRoot = fxmlLoader.load();
+
+            Stage modalStage = new Stage();
+            modalStage.initModality(Modality.APPLICATION_MODAL);
+            modalStage.setTitle("Create Medical Bill");
+            modalStage.setScene(new Scene(modalRoot));
+            modalStage.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+
     public void onDeletePatientClick(ActionEvent event) {
         try {
             int patientId = Integer.parseInt(patientIdField.getText());
@@ -59,7 +79,7 @@ public class AdminViewController {
             e.printStackTrace();
         }
     }
-    
+
     @FXML
     private void onInsertPatientClick() {
         try {
@@ -73,5 +93,4 @@ public class AdminViewController {
             e.printStackTrace();
         }
     }
-
 }
