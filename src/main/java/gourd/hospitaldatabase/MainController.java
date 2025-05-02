@@ -30,11 +30,6 @@ public class MainController {
     }
 
     @FXML
-    public void onPatientButtonClick(ActionEvent actionEvent) {
-        switchView(actionEvent, "patient-view.fxml");
-    }
-
-    @FXML
     public void onStaffButtonClick(ActionEvent actionEvent) {
         switchView(actionEvent, "staff-view.fxml");
     }

@@ -213,8 +213,6 @@ public class SQL_Manager {
         }
     }
 
-    
-
 
     public static boolean insertAppointment(Appointment appointment) {
         // SQL query with placeholders for parameters.
@@ -335,5 +333,49 @@ public class SQL_Manager {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static List<AdministratorModel> getAdministratorsList() {
+        String sql = "SELECT * FROM administrator;";
+        List<AdministratorModel> administratorsList = new ArrayList<>();
+
+        try (var conn = getConnection();
+             var pstmt = conn.prepareStatement(sql);
+             var rs = pstmt.executeQuery()) {
+
+            while (rs.next()) {
+                int administratorID = rs.getInt("AdministratorID");
+                String name = rs.getString("Name");
+                String role = rs.getString("Role");
+
+                AdministratorModel administrator = new AdministratorModel(administratorID, name, role);
+                administratorsList.add(administrator);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return administratorsList;
+    }
+
+    public static List<StaffModel> getStaffList() {
+        String sql = "SELECT * FROM staff;";
+        List<StaffModel> staffList = new ArrayList<>();
+
+        try (var conn = getConnection();
+             var pstmt = conn.prepareStatement(sql);
+             var rs = pstmt.executeQuery()) {
+
+            while (rs.next()) {
+                int staffID = rs.getInt("StaffID");
+                String name = rs.getString("Name");
+                String role = rs.getString("Role");
+
+                StaffModel staff = new StaffModel(staffID, name, role);
+                staffList.add(staff);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return staffList;
     }
 }
