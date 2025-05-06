@@ -6,6 +6,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 
 import javafx.stage.Modality;
@@ -14,18 +15,27 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 public class AdminViewController {
+    private AdministratorModel currentAdmin;
+
+    @FXML
+    public Label welcomeLabel;
 
     @FXML
     private TextField patientIdField;
+
     @FXML
     private TextField searchPatientIdField;
+
+    public void initialize() {
+        currentAdmin = (AdministratorModel) SessionManager.getInstance().getCurrentUser();
+        welcomeLabel.setText("Welcome, " + currentAdmin.getName());
+    }
 
     public void onBackButtonClick(ActionEvent actionEvent) {
         MainController.navigate_to_main(actionEvent);
     }
 
     @FXML
-
     public void onOpenAddBillModal(ActionEvent actionEvent) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("add-bill-modal.fxml"));
