@@ -93,4 +93,19 @@ public class StaffViewController {
             statusLabel.setText("Error: Patient ID and Staff ID must be valid integers.");
         }
     }
+
+    @FXML
+    public void onOpenReportsClick() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("report-view.fxml"));
+            Parent root = loader.load();
+            Stage stage = new Stage();
+            stage.setTitle("Report Viewer");
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 }

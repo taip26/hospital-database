@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox spacing="20" alignment="CENTER" style="-fx-padding: 20;" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="gourd.hospitaldatabase.ReportViewController">
+
+    <Label text="Patient Reports" style="-fx-font-size: 18;" />
+
+    <Button text="Load Insurance Report" onAction="#onLoadInsuranceReportClick"/>
+    <TableView fx:id="insuranceTable" prefHeight="200" prefWidth="400">
+        <columns>
+            <TableColumn fx:id="insuranceColumn" text="Insurance"/>
+            <TableColumn fx:id="insuranceCountColumn" text="Patient Count"/>
+        </columns>
+    </TableView>
+
+    <Button text="Load Appointments per Doctor" onAction="#onLoadAppointmentsReportClick"/>
+    <TableView fx:id="appointmentsTable" prefHeight="200" prefWidth="400" />
+
+    <Button text="Load Monthly Appointment Report" onAction="#onLoadMonthlyReportClick"/>
+    <TableView fx:id="monthlyTable" prefHeight="200" prefWidth="400">
+    </TableView>
+
+</VBox>
