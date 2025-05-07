@@ -51,9 +51,9 @@ public class MainController {
         }
     }
 
-    public static void navigate_to_main(ActionEvent actionEvent) {
+    public static void navigateToLogin(ActionEvent actionEvent) {
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(MainController.class.getResource("main-view.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(MainController.class.getResource("login-view.fxml"));
             Parent root = fxmlLoader.load();
             Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
             stage.setScene(new Scene(root, AppConstants.WINDOW_WIDTH, AppConstants.WINDOW_HEIGHT));

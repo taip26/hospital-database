@@ -43,10 +43,6 @@ public class StaffViewController {
         welcomeLabel.setText("Welcome, " + currentStaff.getName());
     }
 
-    public void onBackButtonClick(ActionEvent actionEvent) {
-        MainController.navigate_to_main(actionEvent);
-    }
-
     @FXML
     private void handleOpenCreateAppointment() {
         try {
@@ -102,6 +98,12 @@ public class StaffViewController {
         } catch (NumberFormatException e) {
             statusLabel.setText("Error: Patient ID and Staff ID must be valid integers.");
         }
+    }
+
+    @FXML
+    public void onLogoutClick(ActionEvent actionEvent) {
+        SessionManager.getInstance().logout();
+        MainController.navigateToLogin(actionEvent);
     }
 
     @FXML
