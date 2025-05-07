@@ -33,4 +33,7 @@
 
     <Button text="Insert New Patient" onAction="#onInsertPatientClick"
             AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="300.0" />
+
+    <Button text="View Reports" onAction="#onViewReportsClick"/>
+
 </AnchorPane>

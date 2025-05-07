@@ -16,4 +16,6 @@
             AnchorPane.topAnchor="50.0"
             onAction="#handleOpenCreateAppointment"/>
 <Button text="Back" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="100.0" onAction="#onBackButtonClick"/>
+    <Button text="View Reports" onAction="#onOpenReportsClick" />
+
 </AnchorPane>
