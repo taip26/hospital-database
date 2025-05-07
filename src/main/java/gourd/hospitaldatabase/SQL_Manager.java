@@ -213,8 +213,6 @@ public class SQL_Manager {
         }
     }
 
-    
-
 
     public static boolean insertAppointment(Appointment appointment) {
         // SQL query with placeholders for parameters.
@@ -335,5 +333,96 @@ public class SQL_Manager {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static List<AdministratorModel> getAdministratorsList() {
+        String sql = "SELECT * FROM administrator;";
+        List<AdministratorModel> administratorsList = new ArrayList<>();
+
+        try (var conn = getConnection();
+             var pstmt = conn.prepareStatement(sql);
+             var rs = pstmt.executeQuery()) {
+
+            while (rs.next()) {
+                int administratorID = rs.getInt("AdministratorID");
+                String name = rs.getString("Name");
+                String role = rs.getString("Role");
+
+                AdministratorModel administrator = new AdministratorModel(administratorID, name, role);
+                administratorsList.add(administrator);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return administratorsList;
+    }
+
+    public static List<StaffModel> getStaffList() {
+        String sql = "SELECT * FROM staff;";
+        List<StaffModel> staffList = new ArrayList<>();
+
+        try (var conn = getConnection();
+             var pstmt = conn.prepareStatement(sql);
+             var rs = pstmt.executeQuery()) {
+
+            while (rs.next()) {
+                int staffID = rs.getInt("StaffID");
+                String name = rs.getString("Name");
+                String role = rs.getString("Role");
+
+                StaffModel staff = new StaffModel(staffID, name, role);
+                staffList.add(staff);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return staffList;
+    }
+
+    public static Object authenticateUser(String username, String password) {
+        String hashedPassword = Hash.sha256(password);
+
+        if (hashedPassword == null) {
+            return null;
+        }
+
+        // Check administrator table first
+        String adminSql = "SELECT * FROM administrator WHERE username = ? AND PasswordHash = ?";
+        try (var conn = getConnection();
+             var adminStmt = conn.prepareStatement(adminSql)) {
+
+            adminStmt.setString(1, username);
+            adminStmt.setString(2, hashedPassword);
+
+            try (var rs = adminStmt.executeQuery()) {
+                if (rs.next()) {
+                    int adminID = rs.getInt("AdministratorID");
+                    String name = rs.getString("Name");
+                    String role = rs.getString("Role");
+                    return new AdministratorModel(adminID, name, role);
+                }
+            }
+
+            // If no match in admin table, check staff table
+            String staffSql = "SELECT * FROM staff WHERE username = ? AND PasswordHash = ?";
+            try (var staffStmt = conn.prepareStatement(staffSql)) {
+                staffStmt.setString(1, username);
+                staffStmt.setString(2, hashedPassword);
+
+                try (var rs = staffStmt.executeQuery()) {
+                    if (rs.next()) {
+                        int staffID = rs.getInt("StaffID");
+                        String name = rs.getString("Name");
+                        String role = rs.getString("Role");
+                        return new StaffModel(staffID, name, role);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Authentication error: " + e.getMessage(), e);
+        }
+
+        // If no match in either table, return null
+        return null;
     }
 }

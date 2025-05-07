@@ -16,6 +16,11 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 public class StaffViewController {
+    private StaffModel currentStaff;
+
+    @FXML
+    private Label welcomeLabel;
+
     @FXML
     private TextField patientIdField;
 
@@ -32,6 +37,11 @@ public class StaffViewController {
     // Label to display status messages
     @FXML
     private Label statusLabel;
+
+    public void initialize() {
+        currentStaff = (StaffModel) SessionManager.getInstance().getCurrentUser();
+        welcomeLabel.setText("Welcome, " + currentStaff.getName());
+    }
 
     public void onBackButtonClick(ActionEvent actionEvent) {
         MainController.navigate_to_main(actionEvent);
