@@ -31,8 +31,10 @@ public class AdminViewController {
         welcomeLabel.setText("Welcome, " + currentAdmin.getName());
     }
 
-    public void onBackButtonClick(ActionEvent actionEvent) {
-        MainController.navigate_to_main(actionEvent);
+    @FXML
+    public void onLogoutClick(ActionEvent actionEvent) {
+        SessionManager.getInstance().logout();
+        MainController.navigateToLogin(actionEvent);
     }
 
     @FXML

@@ -43,10 +43,6 @@ public class StaffViewController {
         welcomeLabel.setText("Welcome, " + currentStaff.getName());
     }
 
-    public void onBackButtonClick(ActionEvent actionEvent) {
-        MainController.navigate_to_main(actionEvent);
-    }
-
     @FXML
     private void handleOpenCreateAppointment() {
         try {
@@ -105,17 +101,9 @@ public class StaffViewController {
     }
 
     @FXML
-    public void onOpenReportsClick() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("report-view.fxml"));
-            Parent root = loader.load();
-            Stage stage = new Stage();
-            stage.setTitle("Report Viewer");
-            stage.setScene(new Scene(root));
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public void onLogoutClick(ActionEvent actionEvent) {
+        SessionManager.getInstance().logout();
+        MainController.navigateToLogin(actionEvent);
     }
 
 }

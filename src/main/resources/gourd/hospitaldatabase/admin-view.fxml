@@ -13,7 +13,7 @@
 
     <Label fx:id="welcomeLabel" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0"/>
 
-    <Button text="Back" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="50.0" onAction="#onBackButtonClick"/>
+    <Button text="Log Out" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" onAction="#onLogoutClick"/>
 
     <Button text="Add Medical Bill" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="100.0" onAction="#onOpenAddBillModal"/>
 
