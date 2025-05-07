@@ -16,6 +16,5 @@
             AnchorPane.topAnchor="50.0"
             onAction="#handleOpenCreateAppointment"/>
     <Button text="Log Out" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" onAction="#onLogoutClick"/>
-    <Button text="View Reports" onAction="#onOpenReportsClick" />
 
 </AnchorPane>
