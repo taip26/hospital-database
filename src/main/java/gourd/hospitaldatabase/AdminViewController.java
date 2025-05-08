@@ -186,12 +186,9 @@ public class AdminViewController {
             Parent root = loader.load();
             PatientUpdateController controller = loader.getController();
             controller.loadPatient(selectedPatient);
-//            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-//            stage.setScene(new Scene(root));
-//            stage.setTitle("Update Patient: " + selectedPatient.getName());
-//            stage.show();
+
             Stage stage = new Stage();
-            stage.setTitle("Update Patient:" + selectedPatient.getName());
+            stage.setTitle("Update Patient: " + selectedPatient.getName());
             stage.setScene(new Scene(root));
             stage.initModality(Modality.APPLICATION_MODAL); // Makes it a modal pop-up.
             stage.setResizable(false);
@@ -209,10 +206,13 @@ public class AdminViewController {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("patient-insert.fxml"));
             Parent root = loader.load();
 
-            Stage stage = (Stage) welcomeLabel.getScene().getWindow();
+            Stage stage = new Stage();
+            stage.setTitle("Insert Patient");
             stage.setScene(new Scene(root));
-            stage.setTitle("Insert New Patient");
-            stage.show();
+            stage.initModality(Modality.APPLICATION_MODAL); // Makes it a modal pop-up.
+            stage.setResizable(false);
+            stage.showAndWait(); // Wait for the window to close before returning.
+            loadAllPatients();
         } catch (Exception e) {
             e.printStackTrace();
             showAlert(Alert.AlertType.ERROR, "Load Error", "Could not load the 'Insert Patient' screen.");

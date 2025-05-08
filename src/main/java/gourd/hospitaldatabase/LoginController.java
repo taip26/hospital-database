@@ -35,9 +35,6 @@ public class LoginController {
             return;
         }
 
-        System.out.println("Username: " + username);
-        System.out.println("Password: " + Hash.sha256(password));
-
         Object user = SQL_Manager.authenticateUser(username, password);
 
         if (user != null) {

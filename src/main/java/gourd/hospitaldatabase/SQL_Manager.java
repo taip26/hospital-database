@@ -213,6 +213,26 @@ public class SQL_Manager {
         }
     }
 
+    public static boolean insertPatient(String dob, String name, String address, String insurance) {
+        String query = "INSERT INTO patients (dob, Name, Address, Insurance) VALUES (?, ?, ?, ?)";
+
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setString(1, dob);
+            stmt.setString(2, name);
+            stmt.setString(3, address);
+            stmt.setString(4, insurance);
+
+            int rows = stmt.executeUpdate();
+            return rows > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
 
     public static boolean insertAppointment(Appointment appointment) {
         // SQL query with placeholders for parameters.

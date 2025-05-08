@@ -17,21 +17,24 @@
         <TextField fx:id="nameField" layoutX="150" layoutY="120" promptText="Name"/>
     </HBox>
 
-    <HBox spacing="10" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="100.0">
+    <HBox spacing="10" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="90.0">
         <Label text="Date of Birth:"/>
         <TextField fx:id="dobField" layoutX="150" layoutY="80" promptText="Date of Birth"/>
     </HBox>
 
-    <HBox spacing="10" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="150.0">
+    <HBox spacing="10" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="130.0">
         <Label text="Address:"/>
         <TextField fx:id="addressField" layoutX="150" layoutY="160" promptText="Address"/>
     </HBox>
 
-    <HBox spacing="10" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="200.0">
+    <HBox spacing="10" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="170.0">
         <Label text="Insurance:"/>
         <TextField fx:id="insuranceField" layoutX="150" layoutY="200" promptText="Insurance"/>
     </HBox>
 
 
-    <Button text="Save Changes" layoutX="150" layoutY="250" onAction="#onSaveChangesClick"/>
+    <HBox spacing="10" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="210.0">
+        <Button text="Cancel"  onAction="#onCancelClick"/>
+        <Button text="Save Changes" onAction="#onSaveChangesClick"/>
+    </HBox>
 </AnchorPane>

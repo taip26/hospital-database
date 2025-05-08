@@ -1,5 +1,6 @@
 package gourd.hospitaldatabase;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TextField;
@@ -19,6 +20,7 @@ public class PatientUpdateController {
         nameField.setText(patient.getName());
         addressField.setText(patient.getAddress());
         insuranceField.setText(patient.getInsurance());
+        currentPatient = patient;
     }
 
     @FXML
@@ -46,4 +48,8 @@ public class PatientUpdateController {
         alert.showAndWait();
     }
 
+    public void onCancelClick(ActionEvent actionEvent) {
+        Stage stage = (Stage) dobField.getScene().getWindow();
+        stage.close();
+    }
 }
