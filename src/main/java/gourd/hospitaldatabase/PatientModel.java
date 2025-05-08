@@ -48,4 +48,9 @@ public class PatientModel {
     public void setInsurance(String insurance) {
         this.Insurance = insurance;
     }
+
+    @Override
+    public String toString() {
+        return PatientID + " - " + Name;
+    }
 }

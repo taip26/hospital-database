@@ -11,12 +11,31 @@
             fx:controller="gourd.hospitaldatabase.PatientInsertController"
             prefHeight="400.0" prefWidth="600.0">
 
-    <Button text="←" layoutX="10" layoutY="10" onAction="#onBackButtonClick" />
+    <Label text="Insert Patient"  AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0" />
 
-    <TextField fx:id="dobField" layoutX="150" layoutY="80" promptText="Date of Birth"/>
-    <TextField fx:id="nameField" layoutX="150" layoutY="120" promptText="Name"/>
-    <TextField fx:id="addressField" layoutX="150" layoutY="160" promptText="Address"/>
-    <TextField fx:id="insuranceField" layoutX="150" layoutY="200" promptText="Insurance"/>
+    <HBox spacing="10" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="50.0">
+        <Label text="Name:"/>
+        <TextField fx:id="nameField" layoutX="150" layoutY="120" promptText="Name"/>
+    </HBox>
 
-    <Button text="Save Changes" layoutX="150" layoutY="250" onAction="#onInsertPatientClick"/>
+    <HBox spacing="10" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="90.0">
+        <Label text="Date of Birth:"/>
+        <TextField fx:id="dobField" layoutX="150" layoutY="80" promptText="YYYY-MM-DD"/>
+    </HBox>
+
+    <HBox spacing="10" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="130.0">
+        <Label text="Address:"/>
+        <TextField fx:id="addressField" layoutX="150" layoutY="160" promptText="Address"/>
+    </HBox>
+
+    <HBox spacing="10" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="170.0">
+        <Label text="Insurance:"/>
+        <TextField fx:id="insuranceField" layoutX="150" layoutY="200" promptText="Insurance"/>
+    </HBox>
+
+
+    <HBox spacing="10" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="210.0">
+        <Button text="Cancel"  onAction="#onCancelClick"/>
+        <Button text="Save Changes" onAction="#onInsertPatientClick"/>
+    </HBox>
 </AnchorPane>

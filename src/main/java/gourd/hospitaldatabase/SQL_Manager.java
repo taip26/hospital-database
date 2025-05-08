@@ -217,19 +217,25 @@ public class SQL_Manager {
         }
     }
 
-    public static int getNextAvailablePatientId() {
-    String query = "SELECT MAX(PatientID) AS MaxID FROM patients";
-    try (Connection conn = getConnection();
-         PreparedStatement stmt = conn.prepareStatement(query);
-         ResultSet rs = stmt.executeQuery()) {
 
-        if (rs.next()) {
-            return rs.getInt("MaxID") + 1;
+    public static boolean insertPatient(String dob, String name, String address, String insurance) {
+        String query = "INSERT INTO patients (dob, Name, Address, Insurance) VALUES (?, ?, ?, ?)";
+
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setString(1, dob);
+            stmt.setString(2, name);
+            stmt.setString(3, address);
+            stmt.setString(4, insurance);
+
+            int rows = stmt.executeUpdate();
+            return rows > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
         }
-    } catch (SQLException e) {
-        e.printStackTrace();
-    }
-    return 1; // default to 1 if no records exist
     }
 
     public static boolean insertAppointment(Appointment appointment) {
@@ -469,35 +475,11 @@ public class SQL_Manager {
         return null;
     }
 
-    public static ObservableList<AppointmentModel> getStaffAppointmentsById(int staffId) {
-        String sql = "SELECT * FROM appointment WHERE StaffID = ?";
-        ObservableList<AppointmentModel> appointmentsList = FXCollections.observableArrayList();
-
-        try (var conn = getConnection();
-             var pstmt = conn.prepareStatement(sql)) {
-
-            pstmt.setInt(1, staffId);
-            try (var rs = pstmt.executeQuery()) {
-                while (rs.next()) {
-                    int appointmentID = rs.getInt("AppointmentID");
-                    int patientID = rs.getInt("PatientID");
-                    String date = rs.getString("VisitDate");
-                    String time = rs.getString("VisitTime");
-                    String status = rs.getString("Status");
-
-                    AppointmentModel appointment = new AppointmentModel(appointmentID, patientID, staffId, status, date, time);
-                    appointmentsList.add(appointment);
-                }
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        return appointmentsList;
-    }
 
     public static List<PatientModel> getAllPatients() {
         String sql = "SELECT * FROM patients;";
         List<PatientModel> patientsList = new ArrayList<>();
+
         try (var conn = getConnection();
              var pstmt = conn.prepareStatement(sql);
              var rs = pstmt.executeQuery()) {
