@@ -425,4 +425,34 @@ public class SQL_Manager {
         // If no match in either table, return null
         return null;
     }
+
+    public static List<PatientModel> getAllPatients() {
+        String sql = "SELECT * FROM patients;";
+        List<PatientModel> patientsList = new ArrayList<>();
+
+        try (var conn = getConnection();
+             var pstmt = conn.prepareStatement(sql);
+             var rs = pstmt.executeQuery()) {
+
+            while (rs.next()) {
+                int patientID = rs.getInt("PatientID");
+                String name = rs.getString("Name");
+                java.sql.Date dob = rs.getDate("dob");
+                String address = rs.getString("Address");
+                String insurance = rs.getString("Insurance");
+
+                PatientModel patient = new PatientModel();
+                patient.setPatientID(patientID);
+                patient.setName(name);
+                patient.setDob(dob);
+                patient.setAddress(address);
+                patient.setInsurance(insurance);
+
+                patientsList.add(patient);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return patientsList;
+    }
 }
