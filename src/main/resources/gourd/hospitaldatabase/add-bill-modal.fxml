@@ -1,51 +1,51 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="gourd.hospitaldatabase.AddBillModalController"
-            prefHeight="400.0" prefWidth="600.0">
-    <VBox spacing="10.0" alignment="CENTER" prefWidth="600.0" prefHeight="400.0" style="-fx-padding: 20;">
-        <Label text="Create Medical Bill" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
+<VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" spacing="10" alignment="CENTER" fx:controller="gourd.hospitaldatabase.AddBillModalController">
+    <HBox spacing="10" alignment="CENTER">
+        <Label text="Admin:"/>
+        <ComboBox fx:id="adminDropdown" prefWidth="200"/>
+    </HBox>
 
-        <HBox spacing="10.0">
-            <Label text="Admin:" />
-            <ComboBox fx:id="adminDropdown" />
-        </HBox>
+    <HBox spacing="10" alignment="CENTER">
+        <Label text="Search Appointments:"/>
+        <TextField fx:id="appointmentSearchField" onKeyReleased="#searchAppointment" promptText="Search by ID, date, etc."/>
+    </HBox>
 
-        <HBox spacing="10.0">
-            <Label text="Appointment:" />
-            <ComboBox fx:id="appointmentDropdown" />
-        </HBox>
+    <TableView fx:id="appointmentTableView" prefHeight="200" prefWidth="600">
+        <columns>
+            <TableColumn fx:id="idColumn" text="ID" prefWidth="50" visible="false"/>
+            <TableColumn fx:id="dateColumn" text="Date" prefWidth="150"/>
+            <TableColumn fx:id="timeColumn" text="Time" prefWidth="100"/>
+            <TableColumn fx:id="patientColumn" text="Patient" prefWidth="150"/>
+            <TableColumn fx:id="staffColumn" text="Doctor" prefWidth="150"/>
+        </columns>
+    </TableView>
 
-        <HBox spacing="10.0">
-            <Label text="Date (MM/DD/YYYY):" />
-            <TextField fx:id="dateField" promptText="MM/DD/YYYY" />
-        </HBox>
+    <HBox spacing="10" alignment="CENTER">
+        <Label text="Date:"/>
+        <TextField fx:id="dateField" promptText="MM/DD/YYYY"/>
+    </HBox>
 
-        <HBox spacing="10.0">
-            <Label text="Reason:" />
-            <TextField fx:id="reasonField" />
-        </HBox>
+    <HBox spacing="10" alignment="CENTER">
+        <Label text="Reason:"/>
+        <TextField fx:id="reasonField"/>
+    </HBox>
 
-        <HBox spacing="10.0">
-            <Label text="Money Sum:" />
-            <TextField fx:id="moneySumField" promptText="0.00" />
-        </HBox>
+    <HBox spacing="10" alignment="CENTER">
+        <Label text="Money Sum:"/>
+        <TextField fx:id="moneySumField"/>
+    </HBox>
 
-        <HBox spacing="10.0">
-            <Label text="Insurance Deductible:" />
-            <TextField fx:id="insuranceDeductibleField" promptText="0.00" />
-        </HBox>
+    <HBox spacing="10" alignment="CENTER">
+        <Label text="Insurance Deductible:"/>
+        <TextField fx:id="insuranceDeductibleField"/>
+    </HBox>
 
-        <HBox spacing="10.0">
-            <Button text="Cancel" onAction="#handleCancel" style="-fx-color: red;"/>
-            <Button text="Submit" onAction="#handleSubmit" style="-fx-color: lightgreen;"/>
-        </HBox>
-    </VBox>
-</AnchorPane>
+    <HBox spacing="10" alignment="CENTER">
+        <Button text="Submit" onAction="#handleSubmit"/>
+        <Button text="Cancel" onAction="#handleCancel"/>
+    </HBox>
+</VBox>
