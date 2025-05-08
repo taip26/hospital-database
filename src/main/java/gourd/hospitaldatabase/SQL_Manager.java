@@ -673,4 +673,33 @@ public class SQL_Manager {
         }
         return appointmentsList;
     }
+
+    public static List<MedicalBillModel> getAllMedicalBills() {
+        String sql = "SELECT * FROM medicalbills";
+        List<MedicalBillModel> billsList = new ArrayList<>();
+
+        try (var conn = getConnection();
+             var stmt = conn.createStatement();
+             var rs = stmt.executeQuery(sql)) {
+
+            while (rs.next()) {
+                MedicalBillModel bill = new MedicalBillModel();
+                bill.setBillID(rs.getInt("BillID"));
+                bill.setAppointmentID(rs.getInt("AppointmentID"));
+                bill.setPatientID(rs.getInt("PatientID"));
+                bill.setStaffID(rs.getInt("StaffID"));
+                bill.setBillDate(rs.getDate("BillDate").toLocalDate());
+                bill.setReason(rs.getString("Reason"));
+                bill.setPaymentAmount(rs.getDouble("PaymentAmount"));
+                bill.setInsuranceDeductible(rs.getDouble("InsuranceDeductible"));
+                bill.setPaymentStatus(rs.getString("PaymentStatus"));
+                bill.setAdminID(rs.getInt("AdminID"));
+
+                billsList.add(bill);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error getting medical bills: " + e.getMessage(), e);
+        }
+        return billsList;
+    }
 }
