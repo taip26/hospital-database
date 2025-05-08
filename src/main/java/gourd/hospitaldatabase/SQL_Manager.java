@@ -5,6 +5,7 @@ import gourd.hospitaldatabase.pojos.Appointment;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -13,7 +14,7 @@ import java.util.List;
 
 
 public class SQL_Manager {
-    private final static String CONNECTION_URL = "jdbc:mysql://localhost:3306/hospitaldb?user=root&password=password";
+    private final static String CONNECTION_URL = "jdbc:mysql://localhost:3306/hospital?user=root&password=password";
     private static Connection conn;
 
     public static String connectToDatabase() {
@@ -213,6 +214,20 @@ public class SQL_Manager {
         }
     }
 
+    public static int getNextAvailablePatientId() {
+    String query = "SELECT MAX(PatientID) AS MaxID FROM patients";
+    try (Connection conn = getConnection();
+         PreparedStatement stmt = conn.prepareStatement(query);
+         ResultSet rs = stmt.executeQuery()) {
+
+        if (rs.next()) {
+            return rs.getInt("MaxID") + 1;
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return 1; // default to 1 if no records exist
+    }
 
     public static boolean insertAppointment(Appointment appointment) {
         // SQL query with placeholders for parameters.
