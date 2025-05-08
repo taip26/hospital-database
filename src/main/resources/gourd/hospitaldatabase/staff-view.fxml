@@ -10,12 +10,33 @@
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="gourd.hospitaldatabase.StaffViewController"
             prefHeight="400.0" prefWidth="600.0">
-<Label text="Staff View" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0"/>
+<Label fx:id="welcomeLabel" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0"/>
     <Button text="Create Appointment"
             AnchorPane.leftAnchor="10.0"
             AnchorPane.topAnchor="50.0"
             onAction="#handleOpenCreateAppointment"/>
-<Button text="Back" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="100.0" onAction="#onBackButtonClick"/>
-    <Button text="View Reports" onAction="#onOpenReportsClick" />
+    <Label text="My Appointments" style="-fx-font-weight: bold;"
+           AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="100.0"/>
+    <Button text="Refresh Appointments"
+            AnchorPane.leftAnchor="150.0"
+            AnchorPane.topAnchor="50.0"
+            onAction="#refreshAppointments"/>
+    <Label text="My Appointments" style="-fx-font-weight: bold;"
+           AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="100.0"/>
+    <TableView fx:id="appointmentsTable"
+               AnchorPane.leftAnchor="10.0"
+               AnchorPane.rightAnchor="10.0"
+               AnchorPane.topAnchor="130.0"
+               AnchorPane.bottomAnchor="10.0">
+        <columns>
+            <TableColumn fx:id="appointmentIdColumn" text="ID" prefWidth="50.0"/>
+            <TableColumn fx:id="patientIdColumn" text="Patient ID" />
+            <TableColumn fx:id="staffIdColumn" text="Staff ID" />
+            <TableColumn fx:id="statusColumn" text="Status" prefWidth="100.0"/>
+            <TableColumn fx:id="dateColumn" text="Date" prefWidth="120.0"/>
+            <TableColumn fx:id="timeColumn" text="Time" prefWidth="120.0"/>
+        </columns>
+    </TableView>
+    <Button text="Log Out" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" onAction="#onLogoutClick"/>
 
 </AnchorPane>

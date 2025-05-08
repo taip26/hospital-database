@@ -1,39 +1,60 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
 
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="gourd.hospitaldatabase.AdminViewController"
-            prefHeight="400.0" prefWidth="600.0">
+            prefHeight="550.0" prefWidth="700.0">
 
-    <Label text="Admin View" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0"/>
+    <VBox spacing="15.0" AnchorPane.topAnchor="0.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+        <padding>
+            <Insets top="10.0" right="20.0" bottom="10.0" left="20.0"/>
+        </padding>
 
-    <Button text="Back" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="50.0" onAction="#onBackButtonClick"/>
+        <HBox alignment="CENTER_LEFT" spacing="10.0" prefWidth="Infinity">
+            <Label fx:id="welcomeLabel" style="-fx-font-size: 14px;">
+                <font>
+                    <Font name="System Bold" size="14.0" />
+                </font>
+            </Label>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="Log Out" onAction="#onLogoutClick"/>
+        </HBox>
 
-    <Button text="Add Medical Bill" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="100.0" onAction="#onOpenAddBillModal"/>
+        <Separator prefWidth="200.0"/>
 
-    <Button text="Update or Delete Medical Bill" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="150.0" onAction="#onOpenUpdateBillModal"/>
+        <VBox spacing="10.0">
+            <Label text="Medical Bill Management" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+            <HBox spacing="10.0">
+                <Button text="Add Medical Bill" onAction="#onOpenAddBillModal" prefWidth="200.0"/>
+                <Button text="Update or Delete Medical Bill" onAction="#onOpenUpdateBillModal" prefWidth="200.0"/>
+            </HBox>
+        </VBox>
 
-    <TextField fx:id="patientIdField" promptText="Enter Patient ID to delete"
-               AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="200.0" prefWidth="200.0" />
+        <Separator prefWidth="200.0"/>
 
-    <Button text="Delete Patient" onAction="#onDeletePatientClick"
-            AnchorPane.leftAnchor="220.0" AnchorPane.topAnchor="200.0" />
+        <VBox spacing="10.0">
+            <Label text="Patient Management" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+            <TextField fx:id="patientSearchField" promptText="Search Patients by Name or ID..."/>
+            <ListView fx:id="patientListView" prefHeight="150.0"/>
+            <HBox spacing="10.0" alignment="CENTER_LEFT">
+                <Button fx:id="updatePatientButton" text="Update Selected Patient" onAction="#onUpdateSelectedPatientClick" disable="true"/>
+                <Button fx:id="deletePatientButton" text="Delete Selected Patient" onAction="#onDeleteSelectedPatientClick" disable="true" style="-fx-background-color: #FF6347; -fx-text-fill: white;"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Button text="Insert New Patient" onAction="#onInsertPatientClick"/>
+            </HBox>
+        </VBox>
 
-    <TextField fx:id="searchPatientIdField" promptText="Enter Patient ID to search"
-               AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="250.0" prefWidth="200.0" />
+        <Separator prefWidth="200.0"/>
 
-    <Button text="Search" onAction="#onSearchPatientClick"
-            AnchorPane.leftAnchor="220.0" AnchorPane.topAnchor="250.0" />
+        <VBox spacing="10.0" alignment="CENTER_LEFT">
+            <Label text="Reporting" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+            <Button text="View Reports" onAction="#onViewReportsClick"/>
+        </VBox>
 
-    <Button text="Insert New Patient" onAction="#onInsertPatientClick"
-            AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="300.0" />
-
-    <Button text="View Reports" onAction="#onViewReportsClick"/>
-
+    </VBox>
 </AnchorPane>

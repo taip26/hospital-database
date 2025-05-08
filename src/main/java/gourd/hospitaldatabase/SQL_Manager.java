@@ -1,10 +1,13 @@
 package gourd.hospitaldatabase;
 
 import gourd.hospitaldatabase.pojos.Appointment;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -13,7 +16,7 @@ import java.util.List;
 
 
 public class SQL_Manager {
-    private final static String CONNECTION_URL = "jdbc:mysql://localhost:3306/hospitaldb?user=root&password=password";
+    private final static String CONNECTION_URL = "jdbc:mysql://localhost:3306/hospital?user=root&password=password";
     private static Connection conn;
 
     public static String connectToDatabase() {
@@ -93,10 +96,11 @@ public class SQL_Manager {
                 int appointmentID = rs.getInt("AppointmentID");
                 int patientID = rs.getInt("PatientID");
                 int staffID = rs.getInt("StaffID");
+                String status = rs.getString("Status");
                 String date = rs.getString("VisitDate");
                 String time = rs.getString("VisitTime");
 
-                AppointmentModel appointment = new AppointmentModel(appointmentID, patientID, staffID, date, time);
+                AppointmentModel appointment = new AppointmentModel(appointmentID, patientID, staffID, status, date, time);
                 appointmentsList.add(appointment);
             }
         } catch (SQLException e) {
@@ -213,8 +217,26 @@ public class SQL_Manager {
         }
     }
 
-    
 
+    public static boolean insertPatient(String dob, String name, String address, String insurance) {
+        String query = "INSERT INTO patients (dob, Name, Address, Insurance) VALUES (?, ?, ?, ?)";
+
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setString(1, dob);
+            stmt.setString(2, name);
+            stmt.setString(3, address);
+            stmt.setString(4, insurance);
+
+            int rows = stmt.executeUpdate();
+            return rows > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 
     public static boolean insertAppointment(Appointment appointment) {
         // SQL query with placeholders for parameters.
@@ -231,6 +253,31 @@ public class SQL_Manager {
             // Assuming appointment.getTime() returns a String like "HH:mm:ss"
             stmt.setString(4, appointment.getTime());
             stmt.setString(5, appointment.getStatus());
+
+            int rowsAffected = stmt.executeUpdate();
+            System.out.println("Rows affected: " + rowsAffected);
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public static boolean insertAppointment(int patientID, int staffID, String visitDate, String visitTime, String status) {
+        // SQL query with placeholders for parameters.
+        String query = "INSERT INTO appointment (PatientID, StaffID, VisitDate, VisitTime, Status) VALUES (?, ?, ?, ?, ?)";
+
+        try (Connection conn = SQL_Manager.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            // Set the parameters from the Appointment object.
+            stmt.setInt(1, patientID);
+            stmt.setInt(2, staffID);
+            // Assuming appointment.getDate() returns a String like "YYYY-MM-DD"
+            stmt.setString(3, visitDate);
+            // Assuming appointment.getTime() returns a String like "HH:mm:ss"
+            stmt.setString(4, visitTime);
+            stmt.setString(5, status);
 
             int rowsAffected = stmt.executeUpdate();
             System.out.println("Rows affected: " + rowsAffected);
@@ -335,5 +382,153 @@ public class SQL_Manager {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static List<AdministratorModel> getAdministratorsList() {
+        String sql = "SELECT * FROM administrator;";
+        List<AdministratorModel> administratorsList = new ArrayList<>();
+
+        try (var conn = getConnection();
+             var pstmt = conn.prepareStatement(sql);
+             var rs = pstmt.executeQuery()) {
+
+            while (rs.next()) {
+                int administratorID = rs.getInt("AdministratorID");
+                String name = rs.getString("Name");
+                String role = rs.getString("Role");
+
+                AdministratorModel administrator = new AdministratorModel(administratorID, name, role);
+                administratorsList.add(administrator);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return administratorsList;
+    }
+
+    public static List<StaffModel> getStaffList() {
+        String sql = "SELECT * FROM staff;";
+        List<StaffModel> staffList = new ArrayList<>();
+
+        try (var conn = getConnection();
+             var pstmt = conn.prepareStatement(sql);
+             var rs = pstmt.executeQuery()) {
+
+            while (rs.next()) {
+                int staffID = rs.getInt("StaffID");
+                String name = rs.getString("Name");
+                String role = rs.getString("Role");
+
+                StaffModel staff = new StaffModel(staffID, name, role);
+                staffList.add(staff);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return staffList;
+    }
+
+    public static Object authenticateUser(String username, String password) {
+        String hashedPassword = Hash.sha256(password);
+
+        if (hashedPassword == null) {
+            return null;
+        }
+
+        // Check administrator table first
+        String adminSql = "SELECT * FROM administrator WHERE username = ? AND PasswordHash = ?";
+        try (var conn = getConnection();
+             var adminStmt = conn.prepareStatement(adminSql)) {
+
+            adminStmt.setString(1, username);
+            adminStmt.setString(2, hashedPassword);
+
+            try (var rs = adminStmt.executeQuery()) {
+                if (rs.next()) {
+                    int adminID = rs.getInt("AdministratorID");
+                    String name = rs.getString("Name");
+                    String role = rs.getString("Role");
+                    return new AdministratorModel(adminID, name, role);
+                }
+            }
+
+            // If no match in admin table, check staff table
+            String staffSql = "SELECT * FROM staff WHERE username = ? AND PasswordHash = ?";
+            try (var staffStmt = conn.prepareStatement(staffSql)) {
+                staffStmt.setString(1, username);
+                staffStmt.setString(2, hashedPassword);
+
+                try (var rs = staffStmt.executeQuery()) {
+                    if (rs.next()) {
+                        int staffID = rs.getInt("StaffID");
+                        String name = rs.getString("Name");
+                        String role = rs.getString("Role");
+                        return new StaffModel(staffID, name, role);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Authentication error: " + e.getMessage(), e);
+        }
+
+        // If no match in either table, return null
+        return null;
+    }
+
+
+    public static List<PatientModel> getAllPatients() {
+        String sql = "SELECT * FROM patients;";
+        List<PatientModel> patientsList = new ArrayList<>();
+
+        try (var conn = getConnection();
+             var pstmt = conn.prepareStatement(sql);
+             var rs = pstmt.executeQuery()) {
+
+            while (rs.next()) {
+                int patientID = rs.getInt("PatientID");
+                String name = rs.getString("Name");
+                java.sql.Date dob = rs.getDate("dob");
+                String address = rs.getString("Address");
+                String insurance = rs.getString("Insurance");
+
+                PatientModel patient = new PatientModel();
+                patient.setPatientID(patientID);
+                patient.setName(name);
+                patient.setDob(dob);
+                patient.setAddress(address);
+                patient.setInsurance(insurance);
+
+                patientsList.add(patient);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return patientsList;
+    }
+
+    public static ObservableList<AppointmentModel> getStaffAppointmentsById(int staffID) {
+        String sql = "SELECT * FROM appointment WHERE StaffID = ?";
+        ObservableList<AppointmentModel> appointmentsList = FXCollections.observableArrayList();
+
+        try (var conn = getConnection();
+             var pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, staffID);
+            try (var rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    int appointmentID = rs.getInt("AppointmentID");
+                    int patientID = rs.getInt("PatientID");
+                    String status = rs.getString("Status");
+                    LocalDate date = rs.getDate("VisitDate").toLocalDate();
+                    LocalTime time = rs.getTime("VisitTime").toLocalTime();
+
+                    AppointmentModel appointment = new AppointmentModel(appointmentID, patientID, staffID, status, date.toString(), time.toString());
+                    appointmentsList.add(appointment);
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return appointmentsList;
     }
 }
