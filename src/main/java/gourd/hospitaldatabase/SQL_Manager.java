@@ -1,10 +1,13 @@
 package gourd.hospitaldatabase;
 
 import gourd.hospitaldatabase.pojos.Appointment;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -13,7 +16,7 @@ import java.util.List;
 
 
 public class SQL_Manager {
-    private final static String CONNECTION_URL = "jdbc:mysql://localhost:3306/hospitaldb?user=root&password=password";
+    private final static String CONNECTION_URL = "jdbc:mysql://localhost:3306/hospital?user=root&password=password";
     private static Connection conn;
 
     public static String connectToDatabase() {
@@ -93,10 +96,11 @@ public class SQL_Manager {
                 int appointmentID = rs.getInt("AppointmentID");
                 int patientID = rs.getInt("PatientID");
                 int staffID = rs.getInt("StaffID");
+                String status = rs.getString("Status");
                 String date = rs.getString("VisitDate");
                 String time = rs.getString("VisitTime");
 
-                AppointmentModel appointment = new AppointmentModel(appointmentID, patientID, staffID, date, time);
+                AppointmentModel appointment = new AppointmentModel(appointmentID, patientID, staffID, status, date, time);
                 appointmentsList.add(appointment);
             }
         } catch (SQLException e) {
@@ -213,6 +217,7 @@ public class SQL_Manager {
         }
     }
 
+
     public static boolean insertPatient(String dob, String name, String address, String insurance) {
         String query = "INSERT INTO patients (dob, Name, Address, Insurance) VALUES (?, ?, ?, ?)";
 
@@ -233,7 +238,6 @@ public class SQL_Manager {
         }
     }
 
-
     public static boolean insertAppointment(Appointment appointment) {
         // SQL query with placeholders for parameters.
         String query = "INSERT INTO appointment (PatientID, StaffID, VisitDate, VisitTime, Status) VALUES (?, ?, ?, ?, ?)";
@@ -249,6 +253,31 @@ public class SQL_Manager {
             // Assuming appointment.getTime() returns a String like "HH:mm:ss"
             stmt.setString(4, appointment.getTime());
             stmt.setString(5, appointment.getStatus());
+
+            int rowsAffected = stmt.executeUpdate();
+            System.out.println("Rows affected: " + rowsAffected);
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public static boolean insertAppointment(int patientID, int staffID, String visitDate, String visitTime, String status) {
+        // SQL query with placeholders for parameters.
+        String query = "INSERT INTO appointment (PatientID, StaffID, VisitDate, VisitTime, Status) VALUES (?, ?, ?, ?, ?)";
+
+        try (Connection conn = SQL_Manager.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            // Set the parameters from the Appointment object.
+            stmt.setInt(1, patientID);
+            stmt.setInt(2, staffID);
+            // Assuming appointment.getDate() returns a String like "YYYY-MM-DD"
+            stmt.setString(3, visitDate);
+            // Assuming appointment.getTime() returns a String like "HH:mm:ss"
+            stmt.setString(4, visitTime);
+            stmt.setString(5, status);
 
             int rowsAffected = stmt.executeUpdate();
             System.out.println("Rows affected: " + rowsAffected);
@@ -445,6 +474,7 @@ public class SQL_Manager {
         // If no match in either table, return null
         return null;
     }
+
 
     public static List<PatientModel> getAllPatients() {
         String sql = "SELECT * FROM patients;";
