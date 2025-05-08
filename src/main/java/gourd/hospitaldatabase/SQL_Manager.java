@@ -505,4 +505,30 @@ public class SQL_Manager {
         }
         return patientsList;
     }
+
+    public static ObservableList<AppointmentModel> getStaffAppointmentsById(int staffID) {
+        String sql = "SELECT * FROM appointment WHERE StaffID = ?";
+        ObservableList<AppointmentModel> appointmentsList = FXCollections.observableArrayList();
+
+        try (var conn = getConnection();
+             var pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, staffID);
+            try (var rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    int appointmentID = rs.getInt("AppointmentID");
+                    int patientID = rs.getInt("PatientID");
+                    String status = rs.getString("Status");
+                    LocalDate date = rs.getDate("VisitDate").toLocalDate();
+                    LocalTime time = rs.getTime("VisitTime").toLocalTime();
+
+                    AppointmentModel appointment = new AppointmentModel(appointmentID, patientID, staffID, status, date.toString(), time.toString());
+                    appointmentsList.add(appointment);
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return appointmentsList;
+    }
 }
