@@ -1,15 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-        <?import java.lang.*?>
-        <?import java.util.*?>
-        <?import javafx.scene.*?>
-        <?import javafx.scene.control.*?>
-        <?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 
 
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="gourd.hospitaldatabase.StaffViewController"
+            fx:controller="gourd.hospitaldatabase.CreateAppointmentController"
             prefHeight="400.0" prefWidth="600.0">
 
     <!-- Title Label -->
@@ -18,33 +14,49 @@
            AnchorPane.topAnchor="10.0"
            style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
 
-    <TextField fx:id="patientIdField" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="50.0" prefWidth="100.0" promptText="Patient ID"/>
+    <HBox spacing="10" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="50.0">
+        <VBox spacing="5" HBox.hgrow="ALWAYS" >
+            <Label text="Search Patient:"/>
+            <TextField fx:id="patientSearchField" promptText="Type name or ID"/>
+            <ListView fx:id="patientListView" prefHeight="150"/>
+        </VBox>
+    </HBox>
 
-    <TextField fx:id="staffIdField" AnchorPane.leftAnchor="130.0"
-               AnchorPane.topAnchor="50.0" prefWidth="100.0" promptText="Staff ID"/>
+    <!-- Patient ID (Shown after selection) -->
+    <HBox spacing="10" AnchorPane.leftAnchor="300.0" AnchorPane.topAnchor="100.0">
+        <Label text="Selected Patient ID:" />
+        <TextField fx:id="patientIdField" AnchorPane.leftAnchor="120.0" AnchorPane.topAnchor="240.0"
+                   prefWidth="100.0" editable="false"/>
+    </HBox>
 
     <!-- DatePicker -->
-    <DatePicker fx:id="appointmentDatePicker"
-                AnchorPane.leftAnchor="10.0"
-                AnchorPane.topAnchor="100.0"
-                prefWidth="150.0"/>
+    <HBox spacing="10" AnchorPane.leftAnchor="300.0" AnchorPane.topAnchor="140.0">
+        <Label text="Date:" />
+        <DatePicker fx:id="appointmentDatePicker"
+                    AnchorPane.leftAnchor="120.0"
+                    AnchorPane.topAnchor="280.0"
+                    prefWidth="150.0"/>
+    </HBox>
 
     <!-- Time Input -->
-    <TextField fx:id="appointmentTimeField"
-               promptText="Time (HH:mm)"
-               AnchorPane.leftAnchor="170.0"
-               AnchorPane.topAnchor="100.0"
-               prefWidth="100.0"/>
+    <HBox spacing="10" AnchorPane.leftAnchor="300.0" AnchorPane.topAnchor="180.0">
+        <Label text="Time:" />
+        <TextField fx:id="appointmentTimeField"
+                   promptText="HH:MM"
+                   AnchorPane.leftAnchor="120.0"
+                   AnchorPane.topAnchor="320.0"
+                   prefWidth="100.0"/>
+    </HBox>
 
-    <!-- Create Appointment Button -->
-    <Button text="Create Appointment"
-            AnchorPane.leftAnchor="10.0"
-            AnchorPane.topAnchor="320.0"
-            onAction="#handleCreateAppointment"/>
+    <!-- Action Buttons -->
+    <HBox spacing="10" AnchorPane.leftAnchor="10.0" AnchorPane.bottomAnchor="10.0">
+        <Button text="Create Appointment" onAction="#handleCreateAppointment"/>
+        <Button text="Cancel" onAction="#handleCancel"/>
+    </HBox>
 
     <!-- Status Label -->
     <Label fx:id="statusLabel"
-           AnchorPane.leftAnchor="150.0"
-           AnchorPane.topAnchor="320.0" />
+           AnchorPane.leftAnchor="10.0"
+           AnchorPane.bottomAnchor="40.0" />
 
 </AnchorPane>

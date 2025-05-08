@@ -1,6 +1,8 @@
 package gourd.hospitaldatabase;
 
 import gourd.hospitaldatabase.pojos.Appointment;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -94,10 +96,11 @@ public class SQL_Manager {
                 int appointmentID = rs.getInt("AppointmentID");
                 int patientID = rs.getInt("PatientID");
                 int staffID = rs.getInt("StaffID");
+                String status = rs.getString("Status");
                 String date = rs.getString("VisitDate");
                 String time = rs.getString("VisitTime");
 
-                AppointmentModel appointment = new AppointmentModel(appointmentID, patientID, staffID, date, time);
+                AppointmentModel appointment = new AppointmentModel(appointmentID, patientID, staffID, status, date, time);
                 appointmentsList.add(appointment);
             }
         } catch (SQLException e) {
@@ -244,6 +247,31 @@ public class SQL_Manager {
             // Assuming appointment.getTime() returns a String like "HH:mm:ss"
             stmt.setString(4, appointment.getTime());
             stmt.setString(5, appointment.getStatus());
+
+            int rowsAffected = stmt.executeUpdate();
+            System.out.println("Rows affected: " + rowsAffected);
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public static boolean insertAppointment(int patientID, int staffID, String visitDate, String visitTime, String status) {
+        // SQL query with placeholders for parameters.
+        String query = "INSERT INTO appointment (PatientID, StaffID, VisitDate, VisitTime, Status) VALUES (?, ?, ?, ?, ?)";
+
+        try (Connection conn = SQL_Manager.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            // Set the parameters from the Appointment object.
+            stmt.setInt(1, patientID);
+            stmt.setInt(2, staffID);
+            // Assuming appointment.getDate() returns a String like "YYYY-MM-DD"
+            stmt.setString(3, visitDate);
+            // Assuming appointment.getTime() returns a String like "HH:mm:ss"
+            stmt.setString(4, visitTime);
+            stmt.setString(5, status);
 
             int rowsAffected = stmt.executeUpdate();
             System.out.println("Rows affected: " + rowsAffected);
@@ -439,5 +467,60 @@ public class SQL_Manager {
 
         // If no match in either table, return null
         return null;
+    }
+
+    public static ObservableList<AppointmentModel> getStaffAppointmentsById(int staffId) {
+        String sql = "SELECT * FROM appointment WHERE StaffID = ?";
+        ObservableList<AppointmentModel> appointmentsList = FXCollections.observableArrayList();
+
+        try (var conn = getConnection();
+             var pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, staffId);
+            try (var rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    int appointmentID = rs.getInt("AppointmentID");
+                    int patientID = rs.getInt("PatientID");
+                    String date = rs.getString("VisitDate");
+                    String time = rs.getString("VisitTime");
+                    String status = rs.getString("Status");
+
+                    AppointmentModel appointment = new AppointmentModel(appointmentID, patientID, staffId, status, date, time);
+                    appointmentsList.add(appointment);
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return appointmentsList;
+    }
+
+    public static List<PatientModel> getAllPatients() {
+        String sql = "SELECT * FROM patients;";
+        List<PatientModel> patientsList = new ArrayList<>();
+        try (var conn = getConnection();
+             var pstmt = conn.prepareStatement(sql);
+             var rs = pstmt.executeQuery()) {
+
+            while (rs.next()) {
+                int patientID = rs.getInt("PatientID");
+                String name = rs.getString("Name");
+                java.sql.Date dob = rs.getDate("dob");
+                String address = rs.getString("Address");
+                String insurance = rs.getString("Insurance");
+
+                PatientModel patient = new PatientModel();
+                patient.setPatientID(patientID);
+                patient.setName(name);
+                patient.setDob(dob);
+                patient.setAddress(address);
+                patient.setInsurance(insurance);
+
+                patientsList.add(patient);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return patientsList;
     }
 }
