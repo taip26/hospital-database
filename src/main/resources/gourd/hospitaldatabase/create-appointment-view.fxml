@@ -9,7 +9,7 @@
 
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="gourd.hospitaldatabase.StaffViewController"
+            fx:controller="gourd.hospitaldatabase.CreateAppointmentController"
             prefHeight="400.0" prefWidth="600.0">
 
     <!-- Title Label -->
@@ -19,9 +19,6 @@
            style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
 
     <TextField fx:id="patientIdField" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="50.0" prefWidth="100.0" promptText="Patient ID"/>
-
-    <TextField fx:id="staffIdField" AnchorPane.leftAnchor="130.0"
-               AnchorPane.topAnchor="50.0" prefWidth="100.0" promptText="Staff ID"/>
 
     <!-- DatePicker -->
     <DatePicker fx:id="appointmentDatePicker"

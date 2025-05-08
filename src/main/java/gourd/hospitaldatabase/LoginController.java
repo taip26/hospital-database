@@ -35,9 +35,6 @@ public class LoginController {
             return;
         }
 
-        System.out.println("Username: " + username);
-        System.out.println("Password: " + Hash.sha256(password));
-
         Object user = SQL_Manager.authenticateUser(username, password);
 
         if (user != null) {
@@ -49,7 +46,7 @@ public class LoginController {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource(viewType));
                 Parent root = loader.load();
 
-                Scene scene = new Scene(root);
+                Scene scene = new Scene(root, AppConstants.WINDOW_WIDTH, AppConstants.WINDOW_HEIGHT);
                 Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
                 stage.setScene(scene);
                 stage.show();
