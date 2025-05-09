@@ -531,4 +531,175 @@ public class SQL_Manager {
         }
         return appointmentsList;
     }
+
+    public static ObservableList<MedicalBillModel> searchMedicalBills(String searchQuery) {
+        String sql = "SELECT * FROM medicalbills WHERE " +
+                "BillID LIKE ? OR " +
+                "PatientID LIKE ? OR " +
+                "StaffID LIKE ? OR " +
+                "Reason LIKE ? OR " +
+                "PaymentStatus LIKE ?";
+
+        ObservableList<MedicalBillModel> billsList = FXCollections.observableArrayList();
+        String searchParam = "%" + searchQuery + "%";
+
+        try (var conn = getConnection();
+             var pstmt = conn.prepareStatement(sql)) {
+
+            // Set the search parameter for all searchable columns
+            pstmt.setString(1, searchParam);
+            pstmt.setString(2, searchParam);
+            pstmt.setString(3, searchParam);
+            pstmt.setString(4, searchParam);
+            pstmt.setString(5, searchParam);
+
+            try (var rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    MedicalBillModel bill = new MedicalBillModel();
+                    bill.setBillID(rs.getInt("BillID"));
+                    bill.setAppointmentID(rs.getInt("AppointmentID"));
+                    bill.setPatientID(rs.getInt("PatientID"));
+                    bill.setStaffID(rs.getInt("StaffID"));
+                    bill.setBillDate(rs.getDate("BillDate").toLocalDate());
+                    bill.setReason(rs.getString("Reason"));
+                    bill.setPaymentAmount(rs.getDouble("PaymentAmount"));
+                    bill.setInsuranceDeductible(rs.getDouble("InsuranceDeductible"));
+                    bill.setPaymentStatus(rs.getString("PaymentStatus"));
+                    bill.setAdminID(rs.getInt("AdminID"));
+
+                    billsList.add(bill);
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error searching medical bills: " + e.getMessage(), e);
+        }
+        return billsList;
+    }
+
+    public static MedicalBillModel getMedicalBillById(int billId) {
+        String sql = "SELECT * FROM medicalbills WHERE BillID = ?";
+
+        try (var conn = getConnection();
+             var pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, billId);
+
+            try (var rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    MedicalBillModel bill = new MedicalBillModel();
+                    bill.setBillID(rs.getInt("BillID"));
+                    bill.setAppointmentID(rs.getInt("AppointmentID"));
+                    bill.setPatientID(rs.getInt("PatientID"));
+                    bill.setStaffID(rs.getInt("StaffID"));
+                    bill.setBillDate(rs.getDate("BillDate").toLocalDate());
+                    bill.setReason(rs.getString("Reason"));
+                    bill.setPaymentAmount(rs.getDouble("PaymentAmount"));
+                    bill.setInsuranceDeductible(rs.getDouble("InsuranceDeductible"));
+                    bill.setPaymentStatus(rs.getString("PaymentStatus"));
+                    bill.setAdminID(rs.getInt("AdminID"));
+
+                    return bill;
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error getting medical bill: " + e.getMessage(), e);
+        }
+        return null;
+    }
+
+    public static String getPatientNameById(int patientId) {
+        String sql = "SELECT Name FROM patients WHERE PatientID = ?";
+        try (var conn = getConnection();
+             var pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, patientId);
+            try (var rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("Name");
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error getting patient name: " + e.getMessage(), e);
+        }
+        return null;
+    }
+
+    public static String getStaffNameById(int staffId) {
+        String sql = "SELECT Name FROM staff WHERE StaffID = ?";
+        try (var conn = getConnection();
+             var pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, staffId);
+            try (var rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("Name");
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error getting staff name: " + e.getMessage(), e);
+        }
+        return null;
+    }
+
+    public static List<AppointmentModel> getAllAppointmentsWithNames() {
+        String sql = "SELECT a.*, p.Name AS PatientName, s.Name AS StaffName " +
+                     "FROM appointment a " +
+                     "LEFT JOIN patients p ON a.PatientID = p.PatientID " +
+                     "LEFT JOIN staff s ON a.StaffID = s.StaffID";
+
+        List<AppointmentModel> appointmentsList = new ArrayList<>();
+
+        try (var conn = getConnection();
+             var pstmt = conn.prepareStatement(sql);
+             var rs = pstmt.executeQuery()) {
+
+            while (rs.next()) {
+                AppointmentModel appointment = new AppointmentModel();
+                appointment.setAppointmentID(rs.getInt("AppointmentID"));
+                appointment.setPatientID(rs.getInt("PatientID"));
+                appointment.setStaffID(rs.getInt("StaffID"));
+                appointment.setStatus(rs.getString("Status"));
+                appointment.setVisitDate(rs.getDate("VisitDate").toLocalDate().toString());
+                appointment.setVisitTime(rs.getTime("VisitTime").toLocalTime().toString());
+
+                // Set the pre-fetched names
+                appointment.setPatientName(rs.getString("PatientName"));
+                appointment.setStaffName(rs.getString("StaffName"));
+
+                appointmentsList.add(appointment);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error getting appointments with names: " + e.getMessage(), e);
+        }
+        return appointmentsList;
+    }
+
+    public static List<MedicalBillModel> getAllMedicalBills() {
+        String sql = "SELECT * FROM medicalbills";
+        List<MedicalBillModel> billsList = new ArrayList<>();
+
+        try (var conn = getConnection();
+             var stmt = conn.createStatement();
+             var rs = stmt.executeQuery(sql)) {
+
+            while (rs.next()) {
+                MedicalBillModel bill = new MedicalBillModel();
+                bill.setBillID(rs.getInt("BillID"));
+                bill.setAppointmentID(rs.getInt("AppointmentID"));
+                bill.setPatientID(rs.getInt("PatientID"));
+                bill.setStaffID(rs.getInt("StaffID"));
+                bill.setBillDate(rs.getDate("BillDate").toLocalDate());
+                bill.setReason(rs.getString("Reason"));
+                bill.setPaymentAmount(rs.getDouble("PaymentAmount"));
+                bill.setInsuranceDeductible(rs.getDouble("InsuranceDeductible"));
+                bill.setPaymentStatus(rs.getString("PaymentStatus"));
+                bill.setAdminID(rs.getInt("AdminID"));
+
+                billsList.add(bill);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error getting medical bills: " + e.getMessage(), e);
+        }
+        return billsList;
+    }
 }
