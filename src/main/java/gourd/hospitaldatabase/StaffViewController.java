@@ -18,6 +18,9 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+
 public class StaffViewController {
     private StaffModel currentStaff;
 
@@ -196,5 +199,60 @@ public class StaffViewController {
             statusLabel.setText("Failed to load patient search view.");
         }
     }
+
+    @FXML
+    private void goToInventory(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("staff-inventory-view.fxml"));
+            Parent root = loader.load();
+
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.setTitle("Inventory");
+            stage.show();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            statusLabel.setText("Failed to load patient search view.");
+        }
+    }
+
+    @FXML
+
+    private void onChangeMyPasswordClick(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("change-password-modal.fxml"));
+            Parent root = loader.load();
+            Stage modalStage = new Stage();
+            modalStage.initModality(Modality.APPLICATION_MODAL);
+            if (event.getSource() instanceof Node) {
+                modalStage.initOwner(((Node) event.getSource()).getScene().getWindow());
+            } else if (welcomeLabel != null && welcomeLabel.getScene() != null) { // Fallback
+                modalStage.initOwner(welcomeLabel.getScene().getWindow());
+            }
+            modalStage.setTitle("Change My Password");
+            modalStage.setScene(new Scene(root));
+            modalStage.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Load Error", "Could not open the 'Change Password' window.");
+        }
+
+    }
+
+
+
+    private void showAlert(Alert.AlertType alertType, String title, String message) {
+
+        Alert alert = new Alert(alertType);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+
+    }
+
+
+
 
 }

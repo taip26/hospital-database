@@ -37,4 +37,12 @@ public class StaffModel {
     public void setRole(String role) {
         Role = role;
     }
+
+    /**
+     * Meaningful string representation for display in UI controls.
+     */
+    @Override
+    public String toString() {
+        return StaffID + " - " + Name + " (" + Role + ")";
+    }
 }

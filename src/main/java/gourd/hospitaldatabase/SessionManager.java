@@ -6,6 +6,7 @@ public class SessionManager {
     private String userType; // "STAFF" or "ADMIN"
 
     private int selectedPatientId = -1;
+    private int selectedInventoryId = -1;
 
     private SessionManager() {
         // Private constructor for singleton
@@ -64,4 +65,8 @@ public class SessionManager {
     public int getSelectedPatientId() {
         return selectedPatientId;
     }
+
+    public void setSelectedInventoryId(int id) { this.selectedInventoryId = id; }
+
+    public int getSelectedInventoryId()   { return selectedInventoryId; }
 }

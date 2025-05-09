@@ -1,6 +1,7 @@
 package gourd.hospitaldatabase;
 
 import gourd.hospitaldatabase.pojos.Appointment;
+import gourd.hospitaldatabase.pojos.Inventory;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -475,6 +476,50 @@ public class SQL_Manager {
         return null;
     }
 
+    public static String getUserPasswordHash(int userId, String userType) {
+        String tableName = userType.equalsIgnoreCase("ADMIN") ? "administrator" : "staff";
+        String idColumnName = userType.equalsIgnoreCase("ADMIN") ? "AdministratorID" : "StaffID";
+        String sql = "SELECT PasswordHash FROM " + tableName + " WHERE " + idColumnName + " = ?";
+
+        try (Connection conn = getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, userId);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("PasswordHash");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
+    public static boolean updateUserPassword(int userId, String userType, String newPassword) {
+        String newHashedPassword = Hash.sha256(newPassword);
+        if (newHashedPassword == null) {
+            System.err.println("Password hashing failed during password update.");
+            return false;
+        }
+
+        String tableName = userType.equalsIgnoreCase("ADMIN") ? "administrator" : "staff";
+        String idColumnName = userType.equalsIgnoreCase("ADMIN") ? "AdministratorID" : "StaffID";
+        String sql = "UPDATE " + tableName + " SET PasswordHash = ? WHERE " + idColumnName + " = ?";
+
+        try (Connection conn = getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, newHashedPassword);
+            pstmt.setInt(2, userId);
+            int rowsAffected = pstmt.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace(); // Handle appropriately
+            return false;
+        }
+    }
+
+
 
     public static List<PatientModel> getAllPatients() {
         String sql = "SELECT * FROM patients;";
@@ -729,24 +774,414 @@ public class SQL_Manager {
         return billsList;
     }
 
-    public static boolean updateAppointment(int appointmentId, int patientId, int staffId, String date, String time, String status) {
-        String sql = "UPDATE appointment SET PatientID = ?, StaffID = ?, VisitDate = ?, VisitTime = ?, Status = ? WHERE AppointmentID = ?";
+
+    public static Inventory getInventoryById(int id) {
+        Inventory item = null;
+        String sql = "SELECT ItemID, Status, Name, Category, Location "
+                + "FROM inventory "
+                + "WHERE ItemID = ?";
+
 
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setInt(1, patientId);
-            stmt.setInt(2, staffId);
-            stmt.setString(3, date);
-            stmt.setString(4, time);
-            stmt.setString(5, status);
-            stmt.setInt(6, appointmentId);
 
-            return stmt.executeUpdate() > 0;
+            stmt.setInt(1, id);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    item = new Inventory(
+                            rs.getInt("ItemID"),
+                            rs.getString("Status"),
+                            rs.getString("Name"),
+                            rs.getString("Category"),
+                            rs.getString("Location")
+                    );
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // you might want to rethrow or handle more gracefully
+        }
+
+        return item;
+    }
+
+    public static List<Inventory> getAllInventory() {
+        List<Inventory> items = new ArrayList<>();
+        String sql = "SELECT ItemID, Status, Name, Category, Location FROM inventory";
+
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                Inventory item = new Inventory(
+                        rs.getInt("ItemID"),
+                        rs.getString("Status"),
+                        rs.getString("Name"),
+                        rs.getString("Category"),
+                        rs.getString("Location")
+                );
+                items.add(item);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // Optionally rethrow as a runtime exception or handle more gracefully
+        }
+
+        return items;
+    }
+
+    public static List<Inventory> searchInventoryByName(String nameTerm) {
+        List<Inventory> items = new ArrayList<>();
+        String sql = """
+            SELECT ItemID, Status, Name, Category, Location
+            FROM inventory
+            WHERE Name LIKE ?
+            """;
+
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            // wrap with wildcards for partial match
+            ps.setString(1, "%" + nameTerm + "%");
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    items.add(new Inventory(
+                            rs.getInt("ItemID"),
+                            rs.getString("Status"),
+                            rs.getString("Name"),
+                            rs.getString("Category"),
+                            rs.getString("Location")
+                    ));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return items;
+    }
+
+    public static boolean updateInventoryStatus(int itemId, String newStatus) {
+        String sql = "UPDATE inventory SET Status = ? WHERE ItemID = ?";
+
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, newStatus);
+            ps.setInt(2, itemId);
+
+            // executeUpdate returns the number of rows affected
+            return ps.executeUpdate() == 1;
 
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
+        }
+    }
+
+    public static int getNextAvailablePatientId() {
+
+        String query = "SELECT MAX(PatientID) AS MaxID FROM patients";
+
+        try (Connection conn = getConnection();
+
+             PreparedStatement stmt = conn.prepareStatement(query);
+
+             ResultSet rs = stmt.executeQuery()) {
+
+
+
+            if (rs.next()) {
+
+                return rs.getInt("MaxID") + 1;
+
+            }
+
+        } catch (SQLException e) {
+
+            e.printStackTrace();
+
+        }
+
+        return 1; // default to 1 if no records exist
+
+    }
+
+
+
+    public static int getNextAvailableStaffId() {
+
+        String query = "SELECT MAX(StaffID) AS MaxID FROM staff";
+
+        try (Connection conn = getConnection();
+
+             PreparedStatement stmt = conn.prepareStatement(query);
+
+             ResultSet rs = stmt.executeQuery()) {
+
+            if (rs.next()) {
+
+                return rs.getInt("MaxID") + 1;
+
+            }
+
+        } catch (SQLException e) {
+
+            e.printStackTrace(); // Or handle more gracefully
+
+        }
+
+        return 1; // Default to 1 if no records exist or an error occurs
+
+    }
+
+
+
+    public static boolean insertStaff(String name, String role, String username, String password) {
+
+        String hashedPassword = Hash.sha256(password);
+
+        if (hashedPassword == null) {
+
+            System.err.println("Password hashing failed.");
+
+            return false;
+
+        }
+
+
+
+        String query = "INSERT INTO staff (Name, Role, username, PasswordHash) VALUES (?, ?, ?, ?)";
+
+
+
+        try (Connection conn = getConnection();
+
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setString(1, name);
+
+            stmt.setString(2, role);
+
+            stmt.setString(3, username);
+
+            stmt.setString(4, hashedPassword);
+
+
+
+            int rowsAffected = stmt.executeUpdate();
+
+            return rowsAffected > 0;
+
+
+
+        } catch (SQLException e) {
+
+            e.printStackTrace();
+
+            if (e.getMessage().toLowerCase().contains("duplicate entry") && e.getMessage().toLowerCase().contains("username")) {
+
+                System.err.println("Error: Username '" + username + "' already exists.");
+
+            }
+
+            return false;
+
+        }
+
+    }
+
+
+
+    public static List<StaffModel> getAllStaff() {
+
+        String sql = "SELECT * FROM staff ORDER BY Name;";
+
+        List<StaffModel> staffList = new ArrayList<>();
+
+        try (Connection conn = getConnection();
+
+             PreparedStatement pstmt = conn.prepareStatement(sql);
+
+             ResultSet rs = pstmt.executeQuery()) {
+
+
+
+            while (rs.next()) {
+
+                int staffID = rs.getInt("StaffID");
+
+                String name = rs.getString("Name");
+
+                String role = rs.getString("Role");
+
+                staffList.add(new StaffModel(staffID, name, role));
+
+            }
+
+        } catch (SQLException e) {
+
+            e.printStackTrace();
+
+        }
+
+        return staffList;
+
+    }
+
+
+
+    public static StaffModel getStaffById(int staffId) {
+
+        String sql = "SELECT * FROM staff WHERE StaffID = ?;";
+
+        try (Connection conn = getConnection();
+
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, staffId);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+
+                if (rs.next()) {
+
+                    return new StaffModel(
+
+                            rs.getInt("StaffID"),
+
+                            rs.getString("Name"),
+
+                            rs.getString("Role")
+
+                    );
+
+                }
+
+            }
+
+        } catch (SQLException e) {
+
+            e.printStackTrace();
+
+        }
+
+        return null;
+
+    }
+
+
+
+
+
+    public static boolean updateStaff(int staffId, String name, String role, String username) {
+
+        String query = "UPDATE staff SET Name = ?, Role = ?, username = ? WHERE StaffID = ?";
+
+        try (Connection conn = getConnection();
+
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+
+
+            stmt.setString(1, name);
+
+            stmt.setString(2, role);
+
+            stmt.setString(3, username);
+
+            stmt.setInt(4, staffId);
+
+
+
+            int rowsAffected = stmt.executeUpdate();
+
+            return rowsAffected > 0;
+
+
+
+        } catch (SQLException e) {
+
+            e.printStackTrace();
+
+            if (e.getMessage().toLowerCase().contains("duplicate entry") && e.getMessage().toLowerCase().contains("username")) {
+
+                System.err.println("Error: Username '" + username + "' already exists for another staff member.");
+
+            }
+
+            return false;
+
+        }
+
+    }
+
+
+
+    public static boolean updateStaffPassword(int staffId, String newPassword) {
+
+        String hashedPassword = Hash.sha256(newPassword);
+
+        if (hashedPassword == null) {
+
+            System.err.println("Password hashing failed for staff password update.");
+
+            return false;
+
+        }
+
+        String query = "UPDATE staff SET PasswordHash = ? WHERE StaffID = ?";
+
+        try (Connection conn = getConnection();
+
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setString(1, hashedPassword);
+
+            stmt.setInt(2, staffId);
+
+            int rowsAffected = stmt.executeUpdate();
+
+            return rowsAffected > 0;
+
+        } catch (SQLException e) {
+
+            e.printStackTrace();
+
+            return false;
+
+        }
+
+    }
+
+
+
+    public static boolean deleteStaff(int staffId) {
+
+        String query = "DELETE FROM staff WHERE StaffID = ?";
+
+        try (Connection conn = getConnection();
+
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+
+
+            stmt.setInt(1, staffId);
+
+            int rowsAffected = stmt.executeUpdate();
+
+            return rowsAffected > 0;
+
+
+
+        } catch (SQLException e) {
+
+            e.printStackTrace();
+
+            return false;
+
         }
     }
 

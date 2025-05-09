@@ -10,28 +10,36 @@
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="gourd.hospitaldatabase.StaffViewController"
             prefHeight="400.0" prefWidth="600.0">
-<Label fx:id="welcomeLabel" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0"/>
+    <HBox spacing="10" alignment="CENTER_LEFT" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0" AnchorPane.rightAnchor="10.0">
+        <Label fx:id="welcomeLabel"/>
+        <Region HBox.hgrow="ALWAYS"/> <Button text="Change My Password" onAction="#onChangeMyPasswordClick"/> <Button text="Log Out" onAction="#onLogoutClick"/>
+    </HBox>
+
     <Button text="Create Appointment"
             AnchorPane.leftAnchor="10.0"
             AnchorPane.topAnchor="50.0"
             onAction="#handleOpenCreateAppointment"/>
-    <Label text="My Appointments" style="-fx-font-weight: bold;"
-           AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="100.0"/>
+
     <Button text="Refresh Appointments"
             AnchorPane.leftAnchor="150.0"
             AnchorPane.topAnchor="50.0"
             onAction="#refreshAppointments"/>
+
     <Button text="Search Patients"
-        AnchorPane.leftAnchor="300.0"
-        AnchorPane.topAnchor="50.0"
-        onAction="#goToPatientSearchView"/>
+            AnchorPane.leftAnchor="300.0"
+            AnchorPane.topAnchor="50.0"
+            onAction="#goToPatientSearchView"/>
+
+    <!-- New "View Inventory" button -->
+    <Button text="View Inventory"
+            AnchorPane.leftAnchor="415.0"
+            AnchorPane.topAnchor="50.0"
+            onAction="#goToInventory"
+            />
+
     <Label text="My Appointments" style="-fx-font-weight: bold;"
            AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="100.0"/>
 
-    <Button fx:id="editButton" text="Edit Appointment"
-            AnchorPane.leftAnchor="300.0"
-            AnchorPane.topAnchor="50.0"
-            onAction="#onEditAppointmentClick"/>
 
     <TableView fx:id="appointmentsTable"
                AnchorPane.leftAnchor="10.0"
@@ -47,6 +55,6 @@
             <TableColumn fx:id="timeColumn" text="Time" prefWidth="120.0"/>
         </columns>
     </TableView>
-    <Button text="Log Out" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" onAction="#onLogoutClick"/>
 
+    <Button text="Log Out" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" onAction="#onLogoutClick"/>
 </AnchorPane>

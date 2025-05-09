@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="gourd.hospitaldatabase.StaffInventoryController"
+            prefHeight="450.0" prefWidth="700.0">
+
+    <!-- Back button -->
+    <Button text="Back"
+            AnchorPane.leftAnchor="10"
+            AnchorPane.topAnchor="10"
+            onAction="#handleReturn"/>
+
+    <!-- Title -->
+    <Label text="Search Inventory"
+           AnchorPane.leftAnchor="300"
+           AnchorPane.topAnchor="10"
+           style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+
+    <!-- Search bar -->
+    <HBox spacing="10"
+          AnchorPane.leftAnchor="10"
+          AnchorPane.topAnchor="50"
+          AnchorPane.rightAnchor="10">
+        <TextField fx:id="inventorySearchField"
+                   promptText="Enter name"
+                   HBox.hgrow="ALWAYS"/>
+        <Button text="Search" onAction="#handleSearch"/>
+    </HBox>
+
+    <!-- Table -->
+    <TableView fx:id="inventoryTable"
+               AnchorPane.leftAnchor="10"
+               AnchorPane.rightAnchor="10"
+               AnchorPane.topAnchor="90"
+               AnchorPane.bottomAnchor="50">
+        <columns>
+            <TableColumn fx:id="nameColumn"    text="Item"     prefWidth="200"/>
+            <TableColumn fx:id="statusColumn"  text="Status"   prefWidth="100"/>
+            <TableColumn fx:id="locationColumn" text="Location" prefWidth="150"/>
+        </columns>
+    </TableView>
+
+    <!-- Status message -->
+    <Label fx:id="statusLabel"
+           AnchorPane.leftAnchor="10"
+           AnchorPane.bottomAnchor="20"/>
+
+</AnchorPane>
