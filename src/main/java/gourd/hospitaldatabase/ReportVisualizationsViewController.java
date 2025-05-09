@@ -25,7 +25,6 @@ public class ReportVisualizationsViewController {
             System.err.println("No medical bills found!");
             return;
         }
-        System.out.println("Medical Bills: " + bills);
 
         // Generate the report
         AnchorPane reportPane = ReportUtils.createMedicalBillStatusReport(bills);
