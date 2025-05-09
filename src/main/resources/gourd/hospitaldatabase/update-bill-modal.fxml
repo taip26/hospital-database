@@ -2,59 +2,77 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
+<?import javafx.geometry.Insets?>
 
-<?import javafx.collections.FXCollections?>
-<?import java.lang.String?>
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="gourd.hospitaldatabase.UpdateBillModalController"
-            prefHeight="400.0" prefWidth="600.0">
-    <VBox spacing="10.0" alignment="CENTER" prefWidth="600.0" prefHeight="400.0" style="-fx-padding: 20;">
-        <Label text="Update or Delete Medical Bill" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
+<VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="gourd.hospitaldatabase.UpdateBillModalController" spacing="10" alignment="CENTER">
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
 
-        <HBox spacing="10.0">
-            <Label text="Admin:" />
-            <ComboBox fx:id="adminDropdown" />
-        </HBox>
+    <children>
+        <Label text="Update Medical Bill" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
 
-        <HBox spacing="10.0">
-            <Label text="Bill:" />
-            <ComboBox fx:id="billDropdown"/>
-        </HBox>
-
-        <HBox spacing="10.0">
-            <Label text="Date (MM/DD/YYYY):" />
-            <TextField fx:id="dateField" promptText="MM/DD/YYYY" />
-        </HBox>
-
-        <HBox spacing="10.0">
-            <Label text="Reason:" />
-            <TextField fx:id="reasonField" />
-        </HBox>
-
-        <HBox spacing="10.0">
-            <Label text="Money Sum:" />
-            <TextField fx:id="moneySumField" promptText="0.00" />
-        </HBox>
-
-        <HBox spacing="10.0">
-            <Label text="Insurance Deductible:" />
-            <TextField fx:id="insuranceDeductibleField" promptText="0.00" />
-        </HBox>
-
-        <HBox spacing="10.0">
-            <Label text="Status:" />
-            <ComboBox fx:id="statusDropdown"/>
-        </HBox>
-
-        <HBox spacing="10.0">
-
-            <HBox spacing="10.0" HBox.hgrow="ALWAYS">
-                <Button text="Cancel" onAction="#handleCancel" style="-fx-color: lightgrey;" />
-                <Button text="Save Changes" onAction="#handleUpdate" style="-fx-color: lightgreen;"/>
+        <!-- Search and Table Section -->
+        <VBox spacing="5">
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Label text="Search:" />
+                <TextField fx:id="searchField" promptText="Search bills..." prefWidth="300" />
             </HBox>
-            <Button text="Delete Selected Bill" onAction="#handleDelete" style="-fx-color: red;"/>
+            <TableView fx:id="billsTableView" prefHeight="200">
+                <columns>
+                    <TableColumn fx:id="billIdColumn" text="Bill ID" prefWidth="60" />
+                    <TableColumn fx:id="billDateColumn" text="Date" prefWidth="100" />
+                    <TableColumn fx:id="billReasonColumn" text="Reason" prefWidth="200" />
+                    <TableColumn fx:id="billStatusColumn" text="Status" prefWidth="100" />
+                </columns>
+            </TableView>
+        </VBox>
+        <!-- Bill Details Section -->
+        <VBox spacing="10" style="-fx-padding: 10 0 10 0;">
+            <Label text="Bill Details" style="-fx-font-weight: bold;" />
+            <HBox spacing="10">
+                <Label text="Admin:" />
+                <ComboBox fx:id="adminDropdown" prefWidth="200" />
+            </HBox>
+            <HBox spacing="10">
+                <Label text="Status:" />
+                <ComboBox fx:id="statusDropdown" prefWidth="200" />
+            </HBox>
+            <HBox spacing="10">
+                <Label text="Date (MM/DD/YYYY):" />
+                <TextField fx:id="dateField" prefWidth="200" />
+            </HBox>
+            <HBox spacing="10">
+                <Label text="Reason:" />
+                    <TextField fx:id="reasonField" prefWidth="200" />
+                </HBox>
+
+                <HBox spacing="10">
+                    <Label text="Payment Amount:" />
+                    <TextField fx:id="moneySumField" prefWidth="200" />
+                </HBox>
+
+                <HBox spacing="10">
+                    <Label text="Insurance Deductible:" />
+                    <TextField fx:id="insuranceDeductibleField" prefWidth="200" />
+                </HBox>
+
+                <!-- New fields for patient and doctor information -->
+                <HBox spacing="10">
+                    <Label text="Patient Info:" />
+                    <TextField fx:id="patientInfoField" prefWidth="300" editable="false" />
+                </HBox>
+
+                <HBox spacing="10">
+                    <Label text="Doctor Info:" />
+                    <TextField fx:id="doctorInfoField" prefWidth="300" editable="false" />
+                </HBox>
+        </VBox>
+
+        <HBox spacing="10" alignment="CENTER">
+            <Button text="Update" onAction="#handleUpdate" />
+            <Button text="Delete" onAction="#handleDelete" />
+            <Button text="Cancel" onAction="#handleCancel" />
         </HBox>
-    </VBox>
-</AnchorPane>
+    </children>
+</VBox>

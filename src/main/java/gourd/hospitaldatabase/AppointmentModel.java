@@ -7,6 +7,19 @@ public class AppointmentModel {
     private String Status;
     private String VisitDate;
     private String VisitTime;
+    private String patientName;
+    private String staffName;
+
+    public AppointmentModel() {
+        this.AppointmentID = -1;
+        this.PatientID = -1;
+        this.StaffID = -1;
+        this.VisitDate = null;
+        this.VisitTime = null;
+        this.Status = null;
+        this.patientName = null;
+        this.staffName = null;
+    }
 
     public AppointmentModel(int appointmentID, int patientID, int staffID, String status, String date, String time) {
         this.AppointmentID = appointmentID;
@@ -16,6 +29,13 @@ public class AppointmentModel {
         this.VisitTime = time;
         this.Status = status;
     }
+
+    // Getters and setters
+    public String getPatientName() { return patientName; }
+    public void setPatientName(String patientName) { this.patientName = patientName; }
+
+    public String getStaffName() { return staffName; }
+    public void setStaffName(String staffName) { this.staffName = staffName; }
 
     // Getter and Setter for Status
     public String getStatus() {
