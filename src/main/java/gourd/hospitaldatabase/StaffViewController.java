@@ -164,4 +164,20 @@ public class StaffViewController {
         }
     }
 
+    @FXML
+    private void goToInventory(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("staff-inventory-view.fxml"));
+            Parent root = loader.load();
+
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.setTitle("Inventory");
+            stage.show();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            statusLabel.setText("Failed to load patient search view.");
+        }
+    }
 }

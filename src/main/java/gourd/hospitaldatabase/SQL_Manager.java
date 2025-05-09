@@ -1,6 +1,7 @@
 package gourd.hospitaldatabase;
 
 import gourd.hospitaldatabase.pojos.Appointment;
+import gourd.hospitaldatabase.pojos.Inventory;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -728,4 +729,110 @@ public class SQL_Manager {
         }
         return billsList;
     }
+
+    public static Inventory getInventoryById(int id) {
+        Inventory item = null;
+        String sql = "SELECT ItemID, Status, Name, Category, Location "
+                + "FROM inventory "
+                + "WHERE ItemID = ?";
+
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, id);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    item = new Inventory(
+                            rs.getInt("ItemID"),
+                            rs.getString("Status"),
+                            rs.getString("Name"),
+                            rs.getString("Category"),
+                            rs.getString("Location")
+                    );
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // you might want to rethrow or handle more gracefully
+        }
+
+        return item;
+    }
+
+    public static List<Inventory> getAllInventory() {
+        List<Inventory> items = new ArrayList<>();
+        String sql = "SELECT ItemID, Status, Name, Category, Location FROM inventory";
+
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                Inventory item = new Inventory(
+                        rs.getInt("ItemID"),
+                        rs.getString("Status"),
+                        rs.getString("Name"),
+                        rs.getString("Category"),
+                        rs.getString("Location")
+                );
+                items.add(item);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // Optionally rethrow as a runtime exception or handle more gracefully
+        }
+
+        return items;
+    }
+
+    public static List<Inventory> searchInventoryByName(String nameTerm) {
+        List<Inventory> items = new ArrayList<>();
+        String sql = """
+            SELECT ItemID, Status, Name, Category, Location
+            FROM inventory
+            WHERE Name LIKE ?
+            """;
+
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            // wrap with wildcards for partial match
+            ps.setString(1, "%" + nameTerm + "%");
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    items.add(new Inventory(
+                            rs.getInt("ItemID"),
+                            rs.getString("Status"),
+                            rs.getString("Name"),
+                            rs.getString("Category"),
+                            rs.getString("Location")
+                    ));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return items;
+    }
+
+    public static boolean updateInventoryStatus(int itemId, String newStatus) {
+        String sql = "UPDATE inventory SET Status = ? WHERE ItemID = ?";
+
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, newStatus);
+            ps.setInt(2, itemId);
+
+            // executeUpdate returns the number of rows affected
+            return ps.executeUpdate() == 1;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
 }
