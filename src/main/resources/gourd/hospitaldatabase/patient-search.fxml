@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="gourd.hospitaldatabase.PatientSearchController"
+            prefHeight="400.0" prefWidth="600.0">
+
+    <Button text="Back"
+            AnchorPane.leftAnchor="10.0"
+            AnchorPane.topAnchor="10.0"
+            onAction="#handleBack"/>
+
+    <Label text="Search Patients"
+           AnchorPane.leftAnchor="260.0"
+           AnchorPane.topAnchor="10.0"
+           style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+
+    <HBox spacing="10"
+          AnchorPane.leftAnchor="10.0"
+          AnchorPane.topAnchor="50.0">
+        <TextField fx:id="patientSearchField"
+                   promptText="Enter name or ID"
+                   prefWidth="400.0"/>
+        <Button text="Search" onAction="#handleSearch"/>
+    </HBox>
+
+    <ListView fx:id="patientListView"
+              AnchorPane.leftAnchor="10.0"
+              AnchorPane.rightAnchor="10.0"
+              AnchorPane.topAnchor="90.0"
+              AnchorPane.bottomAnchor="50.0" />
+
+    <Label fx:id="statusLabel"
+           AnchorPane.leftAnchor="10.0"
+           AnchorPane.bottomAnchor="20.0" />
+
+</AnchorPane>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="gourd.hospitaldatabase.PatientDetailsController"
+            prefHeight="300.0" prefWidth="500.0">
+
+    <Button text="Return to Staff View"
+            AnchorPane.leftAnchor="10.0"
+            AnchorPane.topAnchor="10.0"
+            onAction="#handleReturn" />
+
+    <VBox spacing="10"
+          AnchorPane.leftAnchor="10.0"
+          AnchorPane.topAnchor="50.0"
+          AnchorPane.rightAnchor="10.0">
+        
+        <HBox spacing="10">
+            <Label text="Patient ID:" minWidth="100"/>
+            <TextField fx:id="idField" promptText="ID" editable="false" prefWidth="300"/>
+        </HBox>
+
+        <HBox spacing="10">
+            <Label text="Name:" minWidth="100"/>
+            <TextField fx:id="nameField" promptText="Name" editable="false" prefWidth="300"/>
+        </HBox>
+
+        <HBox spacing="10">
+            <Label text="Date of Birth:" minWidth="100"/>
+            <TextField fx:id="dobField" promptText="YYYY-MM-DD" editable="false" prefWidth="300"/>
+        </HBox>
+
+        <HBox spacing="10">
+            <Label text="Address:" minWidth="100"/>
+            <TextField fx:id="addressField" promptText="Address" editable="false" prefWidth="300"/>
+        </HBox>
+
+        <HBox spacing="10">
+            <Label text="Insurance:" minWidth="100"/>
+            <TextField fx:id="insuranceField" promptText="Insurance" editable="false" prefWidth="300"/>
+        </HBox>
+
+    </VBox>
+</AnchorPane>

@@ -126,5 +126,42 @@ public class StaffViewController {
     }
 
     public void refreshAppointments(ActionEvent actionEvent) {
+        loadAppointments();
     }
+
+    @FXML
+    private void handleOpenPatientSearch() {
+    try {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("patient-search-view.fxml"));
+        Parent root = loader.load();
+
+        Stage stage = new Stage();
+        stage.setTitle("Search Patients");
+        stage.setScene(new Scene(root));
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.setResizable(false);
+        stage.showAndWait();
+
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+}
+
+    @FXML
+    private void goToPatientSearchView(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("patient-search.fxml"));
+            Parent root = loader.load();
+
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.setTitle("Patient Search");
+            stage.show();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            statusLabel.setText("Failed to load patient search view.");
+        }
+    }
+
 }
