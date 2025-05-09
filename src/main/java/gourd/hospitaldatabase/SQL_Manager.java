@@ -702,4 +702,26 @@ public class SQL_Manager {
         }
         return billsList;
     }
+
+    public static boolean updateAppointment(int appointmentId, int patientId, int staffId, String date, String time, String status) {
+        String sql = "UPDATE appointment SET PatientID = ?, StaffID = ?, VisitDate = ?, VisitTime = ?, Status = ? WHERE AppointmentID = ?";
+
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, patientId);
+            stmt.setInt(2, staffId);
+            stmt.setString(3, date);
+            stmt.setString(4, time);
+            stmt.setString(5, status);
+            stmt.setInt(6, appointmentId);
+
+            return stmt.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
 }

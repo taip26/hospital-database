@@ -63,6 +63,9 @@ public class StaffViewController {
     // Label to display status messages
     @FXML
     private Label statusLabel;
+    @FXML
+    private Button editButton;
+
 
     public void initialize() {
         currentStaff = (StaffModel) SessionManager.getInstance().getCurrentUser();
@@ -80,6 +83,11 @@ public class StaffViewController {
 
         // Load appointments
         loadAppointments();
+        editButton.setDisable(true);
+        appointmentsTable.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
+            editButton.setDisable(newVal == null);
+        });
+
     }
 
     private void loadAppointments() {
@@ -124,6 +132,31 @@ public class StaffViewController {
         SessionManager.getInstance().logout();
         MainController.navigateToLogin(actionEvent);
     }
+
+    @FXML
+    private void onEditAppointmentClick() {
+        AppointmentModel selected = appointmentsTable.getSelectionModel().getSelectedItem();
+        if (selected == null) return;
+
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("create-appointment-view.fxml"));
+            Parent root = loader.load();
+
+            CreateAppointmentController controller = loader.getController();
+            controller.setEditAppointment(selected);
+
+            Stage stage = new Stage();
+            stage.setTitle("Edit Appointment");
+            stage.setScene(new Scene(root));
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setOnHidden(event -> loadAppointments()); // refresh after edit
+            stage.showAndWait();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     public void refreshAppointments(ActionEvent actionEvent) {
     }
