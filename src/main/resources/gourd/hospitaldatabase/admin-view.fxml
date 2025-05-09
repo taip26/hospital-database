@@ -64,6 +64,7 @@
         <VBox spacing="10.0" alignment="CENTER_LEFT">
             <Label text="Reporting" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
             <Button text="View Reports" onAction="#onViewReportsClick"/>
+            <Button text="View Report Visualizations" onAction="#onViewReportVisualizationsClick"/>
         </VBox>
     </VBox>
 </AnchorPane>

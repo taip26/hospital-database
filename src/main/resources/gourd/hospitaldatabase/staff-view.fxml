@@ -45,7 +45,6 @@
     <Label text="My Appointments" style="-fx-font-weight: bold;"
            AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="100.0"/>
 
-
     <TableView fx:id="appointmentsTable"
                AnchorPane.leftAnchor="10.0"
                AnchorPane.rightAnchor="10.0"

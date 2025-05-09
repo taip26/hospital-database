@@ -1,9 +1,13 @@
 package gourd.hospitaldatabase;
 
 import javafx.fxml.FXML;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.collections.*;
+import javafx.scene.layout.AnchorPane;
+import javafx.stage.Stage;
 
+import java.util.List;
 import java.util.Map;
 
 public class ReportViewController {
@@ -78,5 +82,4 @@ public class ReportViewController {
         monthlyTable.getColumns().addAll(monthCol, countCol);
         monthlyTable.setItems(entries);
     }
-
 }
