@@ -21,6 +21,10 @@
             AnchorPane.leftAnchor="150.0"
             AnchorPane.topAnchor="50.0"
             onAction="#refreshAppointments"/>
+    <Button text="Search Patients"
+        AnchorPane.leftAnchor="300.0"
+        AnchorPane.topAnchor="50.0"
+        onAction="#goToPatientSearchView"/>
     <Label text="My Appointments" style="-fx-font-weight: bold;"
            AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="100.0"/>
     <TableView fx:id="appointmentsTable"

@@ -531,4 +531,31 @@ public class SQL_Manager {
         }
         return appointmentsList;
     }
+
+    public static PatientModel getPatientById(int patientId) {
+        String sql = "SELECT * FROM patients WHERE PatientID = ?";
+        
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+    
+            stmt.setInt(1, patientId);
+            ResultSet rs = stmt.executeQuery();
+    
+            if (rs.next()) {
+                PatientModel patient = new PatientModel();
+                patient.setPatientID(rs.getInt("PatientID"));
+                patient.setName(rs.getString("Name"));
+                patient.setDob(rs.getDate("dob"));
+                patient.setAddress(rs.getString("Address"));
+                patient.setInsurance(rs.getString("Insurance"));
+                return patient;
+            }
+    
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    
+        return null; 
+    }
+    
 }

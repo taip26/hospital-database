@@ -5,6 +5,8 @@ public class SessionManager {
     private Object currentUser;
     private String userType; // "STAFF" or "ADMIN"
 
+    private int selectedPatientId = -1;
+
     private SessionManager() {
         // Private constructor for singleton
     }
@@ -53,5 +55,13 @@ public class SessionManager {
 
     public AdministratorModel getAdminUser() {
         return isAdmin() ? (AdministratorModel) currentUser : null;
+    }
+
+    public void setSelectedPatientId(int id) {
+        this.selectedPatientId = id;
+    }
+
+    public int getSelectedPatientId() {
+        return selectedPatientId;
     }
 }
