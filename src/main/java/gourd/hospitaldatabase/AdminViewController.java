@@ -255,4 +255,18 @@ public class AdminViewController {
         alert.setContentText(message);
         alert.showAndWait();
     }
+
+    public void onViewReportVisualizationsClick(ActionEvent actionEvent) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("report-visualizations-view.fxml"));
+            Stage stage = new Stage();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setTitle("Report Viewer");
+            stage.setScene(new Scene(loader.load(), AppConstants.WINDOW_WIDTH + 100, AppConstants.WINDOW_HEIGHT + 100));
+            stage.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Load Error", "Could not load the 'Report View' screen.");
+        }
+    }
 }
