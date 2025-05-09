@@ -11,6 +11,8 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import javafx.scene.Node;
 
+import java.io.IOException;
+
 public class PatientInsertController {
 
     @FXML private TextField dobField;
@@ -19,7 +21,7 @@ public class PatientInsertController {
     @FXML private TextField insuranceField;
 
     @FXML
-    private void onInsertPatientClick() {
+    private void onInsertPatientClick(ActionEvent event) {
         String dob = dobField.getText();
         String name = nameField.getText();
         String address = addressField.getText();
@@ -27,18 +29,32 @@ public class PatientInsertController {
 
         boolean success = SQL_Manager.insertPatient(dob, name, address, insurance);
 
-        if (success) {
-            Stage stage = (Stage) dobField.getScene().getWindow();
-            stage.close();
-        } else {
-            showAlert("Insert Failed", "Could not insert patient information.");
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("admin-view.fxml"));
+            Parent root = loader.load();
+            Scene scene = new Scene(root, AppConstants.WINDOW_WIDTH, AppConstants.WINDOW_HEIGHT);
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.setScene(scene);
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert("Error", "Could not insert patient information. " + e.getMessage());
         }
     }
 
     @FXML
     public void onCancelClick(ActionEvent event) {
-        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        stage.close();
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("admin-view.fxml"));
+            Parent root = loader.load();
+            Scene scene = new Scene(root, AppConstants.WINDOW_WIDTH, AppConstants.WINDOW_HEIGHT);
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.setScene(scene);
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert("Error", "Could not load application: " + e.getMessage());
+        }
     }
 
     private void showAlert(String title, String message) {

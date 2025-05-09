@@ -290,7 +290,7 @@ public class SQL_Manager {
     }
 
     public static boolean deleteAppointment(int appointmentId) {
-        String query = "DELETE FROM appointment WHERE appointment_id = ?";
+        String query = "DELETE FROM appointment WHERE appointmentid = ?";
         try (Connection conn = SQL_Manager.getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
 
@@ -934,10 +934,7 @@ public class SQL_Manager {
         return 1; // Default to 1 if no records exist or an error occurs
 
     }
-
-
-
-    public static boolean insertStaff(String name, String role, String username, String password) {
+    public static void insertStaff(String name, String role, String username, String password) {
 
         String hashedPassword = Hash.sha256(password);
 
@@ -945,48 +942,22 @@ public class SQL_Manager {
 
             System.err.println("Password hashing failed.");
 
-            return false;
-
         }
-
-
-
-        String query = "INSERT INTO staff (Name, Role, username, PasswordHash) VALUES (?, ?, ?, ?)";
-
-
-
+        int id = getNextAvailableStaffId();
+        String query = "INSERT INTO staff (Name, Role, username, PasswordHash, staffID) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = getConnection();
-
              PreparedStatement stmt = conn.prepareStatement(query)) {
-
             stmt.setString(1, name);
-
             stmt.setString(2, role);
-
             stmt.setString(3, username);
-
             stmt.setString(4, hashedPassword);
-
-
-
+            stmt.setInt(5, id);
             int rowsAffected = stmt.executeUpdate();
-
-            return rowsAffected > 0;
-
-
-
         } catch (SQLException e) {
-
             e.printStackTrace();
-
             if (e.getMessage().toLowerCase().contains("duplicate entry") && e.getMessage().toLowerCase().contains("username")) {
-
                 System.err.println("Error: Username '" + username + "' already exists.");
-
             }
-
-            return false;
-
         }
 
     }
@@ -1201,6 +1172,83 @@ public class SQL_Manager {
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
+        }
+    }
+
+    public static ObservableList<AppointmentModel> getStaffAppointmentsWithNames(int staffId) {
+        ObservableList<AppointmentModel> appointments = FXCollections.observableArrayList();
+        String sql = "SELECT a.*, p.Name AS PatientName, s.Name AS StaffName " +
+                "FROM appointment a " +
+                "LEFT JOIN patients p ON a.PatientID = p.PatientID " +
+                "LEFT JOIN staff s ON a.StaffID = s.StaffID " +
+                "WHERE a.StaffID = ?";
+
+        try (var conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, staffId);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+
+                while (rs.next()) {
+                    AppointmentModel appointment = new AppointmentModel();
+                    appointment.setAppointmentID(rs.getInt("AppointmentID"));
+                    appointment.setPatientID(rs.getInt("PatientID"));
+                    appointment.setStaffID(rs.getInt("StaffID"));
+                    appointment.setStatus(rs.getString("Status"));
+                    appointment.setVisitDate(rs.getDate("VisitDate").toLocalDate().toString());
+                    appointment.setVisitTime(rs.getTime("VisitTime").toLocalTime().toString());
+
+                    // Set the pre-fetched names
+                    appointment.setPatientName(rs.getString("PatientName"));
+                    appointment.setStaffName(rs.getString("StaffName"));
+
+                    appointments.add(appointment);
+                }
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Error getting appointments with names: " + e.getMessage(), e);
+        }
+        return appointments;
+    }
+
+    public static int getNextAdminID() {
+        String sql = "SELECT MAX(AdministratorID) AS MaxID FROM administrator";
+        try (Connection conn = getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
+
+            if (rs.next()) {
+                return rs.getInt("MaxID") + 1;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 1; // Default to 1 if no records exist
+    }
+
+    public static void insertAdmin(String name, String role, String username, String password) {
+        String sql = "INSERT INTO administrator (Name, Role, username, PasswordHash, AdministratorID) VALUES (?, ?, ?, ?, ?)";
+        String hashedPassword = Hash.sha256(password);
+        if (hashedPassword == null) {
+            System.err.println("Password hashing failed.");
+            return;
+        }
+        int id = getNextAdminID();
+        try (var conn = getConnection();
+             var pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, name);
+            pstmt.setString(2, role);
+            pstmt.setString(3, username);
+            pstmt.setString(4, hashedPassword);
+            pstmt.setInt(5, id);
+
+            int rowsAffected = pstmt.executeUpdate();
+            System.out.println("Inserted " + rowsAffected + " row(s) successfully");
+        } catch (SQLException e) {
+            throw new RuntimeException("Error inserting admin: " + e.getMessage(), e);
         }
     }
 }
