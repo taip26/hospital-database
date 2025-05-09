@@ -25,14 +25,11 @@ public class StaffViewController {
     @FXML
     private TableView<AppointmentModel> appointmentsTable;
 
-    @FXML
-    private TableColumn<AppointmentModel, Integer> appointmentIdColumn;
+
 
     @FXML
-    private TableColumn<AppointmentModel, String> patientIdColumn;
+    private TableColumn<AppointmentModel, String> patientNameColumn;
 
-    @FXML
-    private TableColumn<AppointmentModel, String> staffIdColumn;
 
     @FXML
     private TableColumn<AppointmentModel, LocalDate> dateColumn;
@@ -69,9 +66,7 @@ public class StaffViewController {
         currentStaff = (StaffModel) SessionManager.getInstance().getCurrentUser();
         welcomeLabel.setText("Welcome, " + currentStaff.getName());
 
-        appointmentIdColumn.setCellValueFactory(new PropertyValueFactory<>("appointmentID"));
-        patientIdColumn.setCellValueFactory(new PropertyValueFactory<>("patientID"));
-        staffIdColumn.setCellValueFactory(new PropertyValueFactory<>("staffID"));
+        patientNameColumn.setCellValueFactory(new PropertyValueFactory<>("patientName"));
         statusColumn.setCellValueFactory(new PropertyValueFactory<>("status"));
         dateColumn.setCellValueFactory(new PropertyValueFactory<>("visitDate"));
         timeColumn.setCellValueFactory(new PropertyValueFactory<>("visitTime"));
@@ -88,7 +83,7 @@ public class StaffViewController {
         appointmentsList.clear();
 
         // Get appointments from database
-        ObservableList<AppointmentModel> appointments = SQL_Manager.getStaffAppointmentsById(currentStaff.getStaffID());
+        ObservableList<AppointmentModel> appointments = SQL_Manager.getStaffAppointmentsWithNames(currentStaff.getStaffID());
 
         // Add to the list
         appointmentsList.addAll(appointments);

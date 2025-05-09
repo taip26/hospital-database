@@ -1,5 +1,6 @@
 package gourd.hospitaldatabase;
 
+    import javafx.event.ActionEvent;
     import javafx.fxml.FXML;
     import javafx.scene.control.*;
     import javafx.stage.Stage;
@@ -131,5 +132,17 @@ public class EditAppointmentViewController {
     private void closeWindow() {
         Stage stage = (Stage) statusLabel.getScene().getWindow();
         stage.close();
+    }
+
+    public void handleDeleteAppointment(ActionEvent actionEvent) {
+        // Delete the appointment from the database
+        boolean deleted = SQL_Manager.deleteAppointment(appointment.getAppointmentID());
+
+        if (deleted) {
+            statusLabel.setText("Appointment deleted successfully.");
+            closeWindow();
+        } else {
+            statusLabel.setText("Failed to delete appointment.");
+        }
     }
 }

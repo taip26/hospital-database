@@ -56,6 +56,10 @@
         <Button text="Update Appointment" onAction="#handleEditAppointment"/>
         <Button text="Cancel" onAction="#handleCancel"/>
     </HBox>
+    <Button text="Delete Appointment"
+            AnchorPane.rightAnchor="10.0"
+            AnchorPane.bottomAnchor="10.0"
+            onAction="#handleDeleteAppointment"/>
 
     <!-- Status Label -->
     <Label fx:id="statusLabel"

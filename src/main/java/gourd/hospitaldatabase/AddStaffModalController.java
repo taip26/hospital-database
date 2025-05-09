@@ -5,18 +5,19 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.scene.control.ComboBox; 
 import javafx.stage.Stage;
 
 public class AddStaffModalController {
 
+    @FXML private TextField roleField;
     @FXML private TextField nameField;
-    @FXML private TextField roleField; 
     @FXML private TextField usernameField;
     @FXML private PasswordField passwordField;
+    @FXML private ComboBox<String> roleComboBox;
     @FXML private Label statusLabel;
 
     private AdminViewController adminViewController;
@@ -28,16 +29,20 @@ public class AddStaffModalController {
     @FXML
     public void initialize() {
         statusLabel.setText("");
+        // Populate the ComboBox with role options
+        roleComboBox.getItems().addAll("Staff", "Admin");
+        roleComboBox.setValue("Staff"); // Default value
     }
 
     @FXML
     private void handleAddStaff() {
         String name = nameField.getText();
-        String role = roleField.getText(); 
         String username = usernameField.getText();
         String password = passwordField.getText();
+        String role = roleComboBox.getValue(); // Get selected role
+        String level = roleComboBox.getValue(); // Get selected role
 
-        if (name.isEmpty() || role.isEmpty() || username.isEmpty() || password.isEmpty()) {
+        if (name.isEmpty() || role.isEmpty() || username.isEmpty() || password.isEmpty() || level.isEmpty()) {
             statusLabel.setText("All fields are required.");
             return;
         }
@@ -51,18 +56,16 @@ public class AddStaffModalController {
             return;
         }
 
-        boolean success = SQL_Manager.insertStaff(name, role, username, password);
-
-        if (success) {
-            showAlert(Alert.AlertType.INFORMATION, "Success", "Staff member '" + name + "' added successfully.");
-            if (adminViewController != null) {
-                adminViewController.refreshStaffList(); 
-            }
-            closeWindow();
+        if (level.equals("Admin")) {
+            SQL_Manager.insertAdmin(name, role, username, password);
         } else {
-            showAlert(Alert.AlertType.ERROR, "Error", "Failed to add staff member. Username might already exist or database error occurred.");
-            statusLabel.setText("Failed to add staff. Check console for details.");
+            SQL_Manager.insertStaff(name, role, username, password);
         }
+
+        if (adminViewController != null) {
+            adminViewController.refreshStaffList();
+        }
+        closeWindow();
     }
 
     @FXML
