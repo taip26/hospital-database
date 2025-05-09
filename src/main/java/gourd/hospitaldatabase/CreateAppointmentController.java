@@ -26,6 +26,8 @@ public class CreateAppointmentController {
 
     private StaffModel currentStaff;
     private List<PatientModel> patients;
+    private boolean editMode = false;
+    private AppointmentModel existingAppointment;
 
     @FXML
     public void initialize() {
@@ -77,7 +79,6 @@ public class CreateAppointmentController {
 
     @FXML
     public void handleCreateAppointment() {
-        // Retrieve and trim values from the text fields
         String patientText = patientIdField.getText().trim();
         String timeText = appointmentTimeField.getText().trim();
         LocalDate date = appointmentDatePicker.getValue();
@@ -93,19 +94,50 @@ public class CreateAppointmentController {
             String dateValue = date.toString();
             String status = "Scheduled";
 
-            boolean inserted = SQL_Manager.insertAppointment(patientId, staffId, dateValue, timeText, status);
+            boolean success;
 
-            if (inserted) {
-                statusLabel.setText("Appointment created successfully.");
-                // Close window after successful creation
+            if (editMode && existingAppointment != null) {
+                // EDIT mode logic
+                success = SQL_Manager.updateAppointment(
+                        existingAppointment.getAppointmentID(),
+                        patientId,
+                        staffId,
+                        dateValue,
+                        timeText,
+                        status
+                );
+                statusLabel.setText(success ? "Appointment updated successfully." : "Failed to update appointment.");
+            } else {
+                // CREATE mode logic
+                success = SQL_Manager.insertAppointment(
+                        patientId,
+                        staffId,
+                        dateValue,
+                        timeText,
+                        status
+                );
+                statusLabel.setText(success ? "Appointment created successfully." : "Failed to create appointment.");
+            }
+
+            if (success) {
+                // Close the window
                 Stage stage = (Stage) statusLabel.getScene().getWindow();
                 stage.close();
-            } else {
-                statusLabel.setText("Failed to create appointment.");
             }
+
         } catch (NumberFormatException e) {
             statusLabel.setText("Error: Patient ID and Staff ID must be valid integers.");
         }
+    }
+
+
+    public void setEditAppointment(AppointmentModel appointment) {
+        this.editMode = true;
+        this.existingAppointment = appointment;
+
+        patientIdField.setText(String.valueOf(appointment.getPatientID()));
+        appointmentDatePicker.setValue(LocalDate.parse(appointment.getVisitDate()));
+        appointmentTimeField.setText(appointment.getVisitTime());
     }
 
     @FXML

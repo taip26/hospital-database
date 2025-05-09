@@ -28,10 +28,14 @@ public class PatientSearchController {
     private List<PatientModel> patients;
 
     @FXML
-    public void initialize() {
-        // Load all patients at startup
-        loadPatients();
-    }
+public void initialize() {
+    loadPatients();
+
+    patientSearchField.textProperty().addListener((observable, oldValue, newValue) -> {
+        updatePatientList(newValue);
+    });
+}
+
 
     private void loadPatients() {
         patients = SQL_Manager.getAllPatients();
@@ -86,4 +90,18 @@ public class PatientSearchController {
             statusLabel.setText("Failed to return to staff view.");
         }
     }
+
+    private void updatePatientList(String searchText) {
+        patientListView.getItems().clear();
+    
+        for (PatientModel patient : patients) {
+            if (searchText == null || searchText.isEmpty()
+                || patient.getName().toLowerCase().contains(searchText.toLowerCase())
+                || String.valueOf(patient.getPatientID()).contains(searchText)) {
+    
+                patientListView.getItems().add(patient.getPatientID() + " - " + patient.getName());
+            }
+        }
+    }
+    
 }

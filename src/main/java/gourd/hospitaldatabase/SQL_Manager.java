@@ -774,14 +774,17 @@ public class SQL_Manager {
         return billsList;
     }
 
+
     public static Inventory getInventoryById(int id) {
         Inventory item = null;
         String sql = "SELECT ItemID, Status, Name, Category, Location "
                 + "FROM inventory "
                 + "WHERE ItemID = ?";
 
+
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
+
 
             stmt.setInt(1, id);
             try (ResultSet rs = stmt.executeQuery()) {
@@ -1180,7 +1183,6 @@ public class SQL_Manager {
             return false;
 
         }
-
     }
 
 }

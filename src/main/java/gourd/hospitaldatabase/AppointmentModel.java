@@ -1,5 +1,7 @@
 package gourd.hospitaldatabase;
 
+import java.time.LocalDate;
+
 public class AppointmentModel {
     private int AppointmentID;
     private int PatientID;
@@ -75,6 +77,9 @@ public class AppointmentModel {
     public String getVisitDate() {
         return VisitDate;
     }
+    public LocalDate getVisitDateAsLocalDate() {
+        return LocalDate.parse(this.VisitDate);
+    }
 
     public void setVisitDate(String visitDate) {
         VisitDate = visitDate;
@@ -88,4 +93,5 @@ public class AppointmentModel {
     public void setVisitTime(String visitTime) {
         VisitTime = visitTime;
     }
+
 }

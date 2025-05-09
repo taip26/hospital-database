@@ -16,7 +16,7 @@
             AnchorPane.topAnchor="10.0"
             onAction="#handleBack"/>
 
-    <Label text="Search Patients"
+    <Label text="Show Patient Details"
            AnchorPane.leftAnchor="260.0"
            AnchorPane.topAnchor="10.0"
            style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
