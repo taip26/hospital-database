@@ -1,15 +1,17 @@
 package gourd.hospitaldatabase;
 
+import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
@@ -21,7 +23,25 @@ public class AddBillModalController {
     private ComboBox<String> adminDropdown;
 
     @FXML
-    private ComboBox<String> appointmentDropdown;
+    private TextField appointmentSearchField;
+
+    @FXML
+    private TableView<AppointmentModel> appointmentTableView;
+
+    @FXML
+    private TableColumn<AppointmentModel, Integer> idColumn;
+
+    @FXML
+    private TableColumn<AppointmentModel, String> dateColumn;
+
+    @FXML
+    private TableColumn<AppointmentModel, String> timeColumn;
+
+    @FXML
+    private TableColumn<AppointmentModel, String> patientColumn;
+
+    @FXML
+    private TableColumn<AppointmentModel, String> staffColumn;
 
     @FXML
     private TextField dateField;
@@ -35,27 +55,69 @@ public class AddBillModalController {
     @FXML
     private TextField insuranceDeductibleField;
 
-    Map<String, AppointmentModel> appointmentMap = new HashMap<>();
+    private ObservableList<AppointmentModel> allAppointments;
+    private AppointmentModel selectedAppointment;
 
     private static final Pattern DATE_PATTERN = Pattern.compile("\\d{2}/\\d{2}/\\d{4}");
-    private static final Pattern TIME_PATTERN = Pattern.compile("(0[1-9]|1[0-2]):[0-5][0-9] (AM|PM)");
 
     @FXML
     private void initialize() {
-        List<AppointmentModel> appointments = SQL_Manager.getAllAppointmentsList();
-        for (AppointmentModel appointment : appointments) {
-            appointmentDropdown.getItems().add(
-                   appointment.getAppointmentID() + " " + appointment.getVisitDate() + " " + appointment.getVisitTime() + " " +
-                            appointment.getPatientID() + " " + appointment.getStaffID()
-            );
-            appointmentMap.put(
-                    appointment.getAppointmentID() + " " + appointment.getVisitDate() + " " + appointment.getVisitTime() + " " +
-                            appointment.getPatientID() + " " + appointment.getStaffID(),
-                    appointment
-            );
-        }
+        // Hide ID column
+        idColumn.setVisible(false);
+
+        // Set up table columns
+        idColumn.setCellValueFactory(new PropertyValueFactory<>("appointmentID"));
+        dateColumn.setCellValueFactory(new PropertyValueFactory<>("visitDate"));
+        timeColumn.setCellValueFactory(new PropertyValueFactory<>("visitTime"));
+
+        // Load all appointments with names already joined
+        allAppointments = FXCollections.observableArrayList(SQL_Manager.getAllAppointmentsWithNames());
+
+        // Set up name columns - these will use the pre-populated values
+        patientColumn.setCellValueFactory(new PropertyValueFactory<>("patientName"));
+        staffColumn.setCellValueFactory(new PropertyValueFactory<>("staffName"));
+
+        appointmentTableView.setItems(allAppointments);
+
+        // Add selection listener for appointment table
+        appointmentTableView.getSelectionModel().selectedItemProperty().addListener(
+                (obs, oldSelection, newSelection) -> {
+                    if (newSelection != null) {
+                        selectedAppointment = newSelection;
+                    }
+                });
+
+        // Load admin dropdown
         List<String> admins = SQL_Manager.getAllAdminsString();
         adminDropdown.getItems().addAll(admins);
+
+        // Set default date to today
+        dateField.setText(LocalDate.now().format(DateTimeFormatter.ofPattern("MM/dd/yyyy")));
+    }
+
+    @FXML
+    private void searchAppointment(KeyEvent event) {
+        String searchText = appointmentSearchField.getText().toLowerCase();
+
+        if (searchText == null || searchText.isEmpty()) {
+            appointmentTableView.setItems(allAppointments);
+            return;
+        }
+
+        // Filter appointments based on search text
+        ObservableList<AppointmentModel> filteredList = FXCollections.observableArrayList();
+        for (AppointmentModel appointment : allAppointments) {
+            if (String.valueOf(appointment.getAppointmentID()).contains(searchText) ||
+                    String.valueOf(appointment.getPatientID()).contains(searchText) ||
+                    String.valueOf(appointment.getStaffID()).contains(searchText) ||
+                    appointment.getVisitDate().toLowerCase().contains(searchText) ||
+                    appointment.getVisitTime().toLowerCase().contains(searchText) ||
+                    appointment.getStatus().toLowerCase().contains(searchText)) {
+                filteredList.add(appointment);
+            }
+        }
+
+        appointmentTableView.setItems(filteredList);
     }
 
     @FXML
@@ -65,26 +127,18 @@ public class AddBillModalController {
             showAlert("Invalid Admin", "Please select an admin.");
             return;
         }
+
         // Extract admin ID from the selected admin string
         int adminID = Integer.parseInt(selectedAdmin.split(" ")[0]);
-        String appointmentSelected = appointmentDropdown.getValue();
-        if (appointmentSelected == null || appointmentSelected.isEmpty()) {
-            showAlert("Invalid Appointment", "Please select an appointment.");
+
+        if (selectedAppointment == null) {
+            showAlert("Invalid Appointment", "Please select an appointment from the table.");
             return;
         }
-        // Extract appointment details
-        AppointmentModel appointment = appointmentMap.get(appointmentSelected);
-        int doctorID = appointment.getStaffID();
-        int patientID = appointment.getPatientID();
-//        String[] appointmentSplit = appointment.split(" ");
-//        if (appointmentSplit.length < 4) {
-//            showAlert("Invalid Appointment Format", "The selected appointment format is incorrect.");
-//            return;
-//        }
-//        String doctorIDString = appointmentSplit[0];
-//        String patientIDString = appointmentSplit[1];
-//        String visitDate = appointmentSplit[2];
-//        String visitTime = appointmentSplit[3];
+
+        int doctorID = selectedAppointment.getStaffID();
+        int patientID = selectedAppointment.getPatientID();
+
         String date = dateField.getText();
         String reason = reasonField.getText();
         String moneySum = moneySumField.getText();
@@ -117,17 +171,6 @@ public class AddBillModalController {
             return;
         }
 
-//        int patientID;
-//        int doctorID;
-//
-//        try {
-//            patientID = Integer.parseInt(patientIDString);
-//            doctorID = Integer.parseInt(doctorIDString);
-//        } catch (NumberFormatException e) {
-//            showAlert("Invalid ID", "Please select a valid appointment.");
-//            return;
-//        }
-
         String formattedDate;
         try {
             LocalDate parsedDate = LocalDate.parse(date, DateTimeFormatter.ofPattern("MM/dd/yyyy"));
@@ -137,9 +180,9 @@ public class AddBillModalController {
             return;
         }
 
-
+        // Debug values
         System.out.println("Debugging Values:");
-        System.out.println("Appointment ID: " + appointment.getAppointmentID());
+        System.out.println("Appointment ID: " + selectedAppointment.getAppointmentID());
         System.out.println("Patient ID: " + patientID);
         System.out.println("Doctor ID: " + doctorID);
         System.out.println("Date: " + formattedDate);
@@ -147,32 +190,30 @@ public class AddBillModalController {
         System.out.println("Money Sum: " + moneySumValue);
         System.out.println("Insurance Deductible: " + insuranceDeductibleValue);
         System.out.println("Payment Status: Pending");
-        System.out.println("Admin ID: 1");
-
+        System.out.println("Admin ID: " + adminID);
 
         // Insert data into the database
         try {
             String result = SQL_Manager.insertMedicalBill(
-                    appointment.getAppointmentID(),
-                    patientID, // Replace with actual patientID
-                    doctorID, // Replace with actual staffID
+                    selectedAppointment.getAppointmentID(),
+                    patientID,
+                    doctorID,
                     formattedDate,
                     reason,
                     moneySumValue,
                     insuranceDeductibleValue,
-                    "Pending", // Example payment status
-                    adminID  // Replace with actual adminID
+                    "Pending",
+                    adminID
             );
             showAlert("Success", result);
             handleCancel(null); // Close the modal after successful submission
         } catch (Exception e) {
             showAlert("Error", "Failed to insert medical bill: " + e.getMessage());
         }
-
     }
 
     private void showAlert(String title, String message) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setContentText(message);
@@ -184,7 +225,7 @@ public class AddBillModalController {
         if (actionEvent != null) {
             stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
         } else {
-            stage = (Stage) dateField.getScene().getWindow(); // Fallback to the current window
+            stage = (Stage) dateField.getScene().getWindow();
         }
         stage.close();
     }
