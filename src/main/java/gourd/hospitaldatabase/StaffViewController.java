@@ -1,6 +1,5 @@
 package gourd.hospitaldatabase;
 
-import gourd.hospitaldatabase.pojos.Appointment;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -19,7 +18,6 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
 
 public class StaffViewController {
     private StaffModel currentStaff;
@@ -220,6 +218,41 @@ public class StaffViewController {
     }
 
 
+    @FXML
+    public void onEditAppointmentClick(ActionEvent actionEvent) {
+        // Get the selected appointment
+        AppointmentModel selectedAppointment = appointmentsTable.getSelectionModel().getSelectedItem();
 
+        if (selectedAppointment == null) {
+            showAlert(Alert.AlertType.WARNING, "No Selection", "Please select an appointment to edit.");
+            return;
+        }
 
+        try {
+            // Load the FXML file
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("edit-appointment-view.fxml"));
+            Parent root = loader.load();
+
+            // Get the controller and pass the selected appointment
+            EditAppointmentViewController controller = loader.getController();
+            controller.setAppointment(selectedAppointment);
+
+            // Create a new stage for the modal
+            Stage stage = new Stage();
+            stage.setTitle("Edit Appointment");
+            stage.setScene(new Scene(root));
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setResizable(false);
+
+            // Show the modal and wait for it to close
+            stage.showAndWait();
+
+            // Refresh the appointments table after editing
+            loadAppointments();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Load Error", "Could not open the 'Edit Appointment' window.");
+        }
+    }
 }
