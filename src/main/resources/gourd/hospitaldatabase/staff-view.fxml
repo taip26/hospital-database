@@ -30,6 +30,11 @@
             AnchorPane.topAnchor="50.0"
             onAction="#goToPatientSearchView"/>
 
+    <Button fx:id="editButton" text="Edit Appointment"
+            AnchorPane.rightAnchor="10.0"
+            AnchorPane.topAnchor="90.0"
+            onAction="#onEditAppointmentClick"/>
+
     <!-- New "View Inventory" button -->
     <Button text="View Inventory"
             AnchorPane.leftAnchor="415.0"

@@ -1185,4 +1185,24 @@ public class SQL_Manager {
         }
     }
 
+    public static boolean updateAppointment(int appointmentID, int patientId, int staffId, String dateValue, String timeText, String status) {
+        String sql = "UPDATE appointment SET PatientID = ?, StaffID = ?, VisitDate = ?, VisitTime = ?, Status = ? WHERE AppointmentID = ?";
+
+        try (Connection conn = getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, patientId);
+            pstmt.setInt(2, staffId);
+            pstmt.setString(3, dateValue);
+            pstmt.setString(4, timeText);
+            pstmt.setString(5, status);
+            pstmt.setInt(6, appointmentID);
+
+            int rowsAffected = pstmt.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }
