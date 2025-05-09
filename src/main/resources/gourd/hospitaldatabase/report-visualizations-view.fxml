@@ -12,8 +12,10 @@
             prefHeight="400.0" prefWidth="600.0">
     <Label text="Report Visualizations" style="-fx-font-size: 18;" AnchorPane.topAnchor="10.0" AnchorPane.leftAnchor="10.0"/>
 
-
-    <Button fx:id="medicalBillStatusReportButton" text="Load Medical Bills Status" onAction="#onViewMedicalBillStatusReportClick" AnchorPane.topAnchor="50.0" AnchorPane.leftAnchor="10.0"/>
+    <Button text="Load Medical Bills Status" onAction="#onViewMedicalBillStatusReportClick" AnchorPane.topAnchor="50.0" AnchorPane.leftAnchor="10.0"/>
+    <Button text="Load Appointments per Doctor" onAction="#onViewStaffPerformanceReportClick" AnchorPane.topAnchor="50.0" AnchorPane.leftAnchor="200.0"/>
+    <Button text="Load Financial Report" onAction="#onViewFinancialReportClick" AnchorPane.topAnchor="50.0" AnchorPane.leftAnchor="400.0"/>
+    <Button text="Load Patient Insurance Report" onAction="#onViewPatientInsuranceReportClick" AnchorPane.topAnchor="50.0" AnchorPane.leftAnchor="600.0"/>
 
     <AnchorPane fx:id="chartContainer"
                 prefHeight="250.0" prefWidth="400.0"

@@ -14,32 +14,6 @@ import java.util.stream.Collectors;
 
 public class ReportUtils {
 
-    public static AnchorPane createAppointmentTrendsReport(List<AppointmentModel> appointments) {
-        // Group appointments by date and count them
-        Map<String, Long> appointmentCounts = appointments.stream()
-                .collect(Collectors.groupingBy(AppointmentModel::getVisitDate, Collectors.counting()));
-
-        // Prepare data for the chart
-        List<String> dates = appointmentCounts.keySet().stream().sorted().toList();
-        List<Long> counts = dates.stream().map(appointmentCounts::get).toList();
-
-        // Create the chart
-        CategoryChart chart = new CategoryChartBuilder()
-                .title("Appointment Trends")
-                .xAxisTitle("Date")
-                .yAxisTitle("Number of Appointments")
-                .build();
-        chart.addSeries("Appointments", dates, counts);
-
-        // Embed the chart in JavaFX
-        SwingNode swingNode = new SwingNode();
-        swingNode.setContent(new XChartPanel<>(chart));
-
-        AnchorPane chartPane = new AnchorPane();
-        chartPane.getChildren().add(swingNode);
-        return chartPane;
-    }
-
     public static AnchorPane createStaffPerformanceReport(List<AppointmentModel> appointments, List<StaffModel> staffList) {
         // Count appointments by staff ID
         Map<Integer, Long> staffAppointmentCounts = appointments.stream()
@@ -63,6 +37,9 @@ public class ReportUtils {
                 .build();
         chart.addSeries("Appointments", staffNames, counts);
 
+        // Rotate X-axis labels for better readability
+        chart.getStyler().setXAxisLabelRotation(45);
+
         // Embed the chart in JavaFX
         SwingNode swingNode = new SwingNode();
         swingNode.setContent(new XChartPanel<>(chart));
@@ -72,7 +49,27 @@ public class ReportUtils {
         return chartPane;
     }
 
+    public static AnchorPane createFinancialReport(List<MedicalBillModel> bills) {
+        // Aggregate financial data
+        double totalPayments = bills.stream().mapToDouble(MedicalBillModel::getPaymentAmount).sum();
+        double totalInsuranceDeductibles = bills.stream().mapToDouble(MedicalBillModel::getInsuranceDeductible).sum();
 
+        // Create the chart
+        CategoryChart chart = new CategoryChartBuilder()
+                .title("Financial Report")
+                .xAxisTitle("Category")
+                .yAxisTitle("Amount")
+                .build();
+        chart.addSeries("Financial Data", List.of("Payments", "Insurance Deductibles"), List.of(totalPayments, totalInsuranceDeductibles));
+
+        // Embed the chart in JavaFX
+        SwingNode swingNode = new SwingNode();
+        swingNode.setContent(new XChartPanel<>(chart));
+
+        AnchorPane chartPane = new AnchorPane();
+        chartPane.getChildren().add(swingNode);
+        return chartPane;
+    }
 
     public static AnchorPane createMedicalBillStatusReport(List<MedicalBillModel> bills) {
         // Count bills by payment status
@@ -84,6 +81,26 @@ public class ReportUtils {
                 .title("Medical Bill Status")
                 .build();
         statusCounts.forEach(chart::addSeries);
+
+        // Embed the chart in JavaFX
+        SwingNode swingNode = new SwingNode();
+        swingNode.setContent(new XChartPanel<>(chart));
+
+        AnchorPane chartPane = new AnchorPane();
+        chartPane.getChildren().add(swingNode);
+        return chartPane;
+    }
+
+    public static AnchorPane createPatientInsuranceReport(List<PatientModel> patients) {
+        // Aggregate data by insurance provider
+        Map<String, Long> insuranceCounts = patients.stream()
+                .collect(Collectors.groupingBy(PatientModel::getInsurance, Collectors.counting()));
+
+        // Create the pie chart
+        PieChart chart = new PieChartBuilder()
+                .title("Patient Insurance Distribution")
+                .build();
+        insuranceCounts.forEach(chart::addSeries);
 
         // Embed the chart in JavaFX
         SwingNode swingNode = new SwingNode();
